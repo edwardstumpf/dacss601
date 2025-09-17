@@ -1,8 +1,8 @@
 ---
 title: "Challenge_1: Data Import, Description, and Transformation(1)"
-author: "Change to Your Name"
+author: "Edward Augustine Stumpf"
 description: ""
-date: ""
+date: "9-16-2025"
 format: 
   html: 
     embed-resources: true
