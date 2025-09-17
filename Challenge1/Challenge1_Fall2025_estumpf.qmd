@@ -96,8 +96,8 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     print("")
     print("*** Question 4 Output ***")
 
-    for (colNum in 1:ncol(athleteEvents)) {
-      naCount <- sum(is.na(athleteEvents[,colNum]))
+    for (colNum in seq_along(athleteEvents)) {
+      naCount <- sum(is.na(athleteEvents[colNum]))
       if (naCount > 0) {
         columnName <- athleteEventColumns[colNum]
         print(sprintf(
@@ -122,6 +122,8 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     The unit of observation is Olympic athletes, their Olympic events, and any medals the athlete won in the specific event
 
     \(4\) According to the lecture, is this a "tidy" data?
+
+    No, multiple columns (Age, Height, and Weight) contain NA values. Note: the Medal column also contains NA values, but this is used to indicate that a given athlete didn't medal in the event.
 
 3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
 
