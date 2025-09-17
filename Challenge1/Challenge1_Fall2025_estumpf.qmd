@@ -97,7 +97,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 1.  **Read the dataset "paintings.csv".**
 
     ```{r}
-    #Type your code here
+    paintings = read_csv("data/paintings.csv")
     ```
 
 2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
@@ -137,7 +137,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 1.  **Read the dataset "babynames.csv":**
 
 ```{r}
-#Type your code in the code chunk.
+babyNames = read_csv("data/babynames.csv")
 ```
 
 2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
