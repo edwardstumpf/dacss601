@@ -89,8 +89,8 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     ))
     print(sprintf(
         'Year Range: %s - %s', 
-        min(athleteEvents[,10]),
-        max(athleteEvents[,10])
+        min(athleteEvents[10]),
+        max(athleteEvents[10])
     ))
 
     print("")
@@ -131,11 +131,43 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Type your code in the code chunk.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
+
+    print("*** Question 1 Output ***")
+    getUniqueCountForCol <- function(df, colNum) {
+      count(unique(df[colNum]))
+    }
+    print(sprintf(
+      'Unique Sports: %s',
+      getUniqueCountForCol(athleteEvents, 13)
+    ))
+    print(sprintf(
+      'Unique Teams: %s',
+      getUniqueCountForCol(athleteEvents, 7)
+    ))
+    print(sprintf(
+      'Unique Names: %s',
+      getUniqueCountForCol(athleteEvents, 2)
+    ))
+
+    print("")
+    print("*** Question 2 Output ***")
+    print(sprintf(
+        'Years Recorded: %s', 
+        max(athleteEvents[10]) - min(athleteEvents[10])
+    ))
+
+    print("")
+    print("*** Question 3 Output ***")
+    print("TODO")
     ```
 
     \(1\) How many unique sports, unique teams, and total unique names are in the data?
 
+    There are 66 unique sports, 1,184 unique teams, and 134,731 unique names
+
     \(2\) How many years does this data record?
+
+    120 years
 
     \(3\) Summarize the min, mean, median, and max of "Age" and "Weight". (Must use summarize())
 
