@@ -134,7 +134,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     print("*** Question 1 Output ***")
     getUniqueCountForCol <- function(df, colNum) {
-      count(unique(df[colNum]))
+      count(distinct(df[colNum]))
     }
     print(sprintf(
       'Unique Sports: %s',
