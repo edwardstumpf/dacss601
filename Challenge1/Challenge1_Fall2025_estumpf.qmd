@@ -68,13 +68,39 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Type your code in the code chunk. 
 
     #Outside the code chunk, please write a paragraph answering the following questions.
+
+    print("*** Question 1 Output ***")
+    nrow(athleteEvents)
+    ncol(athleteEvents)
+    dim(athleteEvents)
+
+    print("*** Question 2 Output ***")
+    athleteEventColumns = colnames(athleteEvents)
+    paste(athleteEventColumns,collapse=" ")
+    min(athleteEvents[,10])
+    max(athleteEvents[,10])
+
+
+    print("*** Question 4 Output ***")
+
+    for (colNum in 1:ncol(athleteEvents)) {
+      columnName = athleteEventColumns[colNum]
+      nullCount = sum(is.na(athleteEvents[,colNum]))
+      print(sprintf("Column %s contains %s null values", columnName, nullCount))
+    }
     ```
 
     \(1\) What is the dimension of the data (# of rows and columns)?
 
+    There are 271,116 rows and 15 columns
+
     \(2\) What do the rows and columns mean in this data?
 
+    This dataset appears to house data about Olympic athletes from 1896 to 2016. It includes data about an athlete's name, sex, age, height, weight, team, nationality/country, Olympic Games name, Olympic Games year, Olympic sport, official Olympic event name, and what medal the athlete won (if any)
+
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
+
+    The unit of observation is Olympic athletes, their Olympic events, and any medals the athlete won in the specific event
 
     \(4\) According to the lecture, is this a "tidy" data?
 
