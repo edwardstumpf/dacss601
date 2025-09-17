@@ -68,25 +68,44 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Type your code in the code chunk. 
 
     #Outside the code chunk, please write a paragraph answering the following questions.
+    athleteEventColumns = colnames(athleteEvents)
 
     print("*** Question 1 Output ***")
-    nrow(athleteEvents)
-    ncol(athleteEvents)
-    dim(athleteEvents)
+    athleteEventsDim = dim(athleteEvents)
+    print(sprintf(
+        'Rows Count: %s', 
+        athleteEventsDim[1]
+    ))
+    print(sprintf(
+        'Columns Count: %s', 
+        athleteEventsDim[2]
+    ))
 
+    print("")
     print("*** Question 2 Output ***")
-    athleteEventColumns = colnames(athleteEvents)
-    paste(athleteEventColumns,collapse=" ")
-    min(athleteEvents[,10])
-    max(athleteEvents[,10])
+    print(sprintf(
+        'Columns: %s', 
+        paste(athleteEventColumns, collapse=", ")
+    ))
+    print(sprintf(
+        'Year Range: %s - %s', 
+        min(athleteEvents[,10]),
+        max(athleteEvents[,10])
+    ))
 
-
+    print("")
     print("*** Question 4 Output ***")
 
     for (colNum in 1:ncol(athleteEvents)) {
-      columnName = athleteEventColumns[colNum]
-      nullCount = sum(is.na(athleteEvents[,colNum]))
-      print(sprintf("Column %s contains %s null values", columnName, nullCount))
+      naCount = sum(is.na(athleteEvents[,colNum]))
+      if (naCount > 0) {
+        columnName = athleteEventColumns[colNum]
+        print(sprintf(
+          "Column %s: %s NA values", 
+          columnName, 
+          naCount
+        ))
+      }
     }
     ```
 
