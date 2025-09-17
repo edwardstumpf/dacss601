@@ -58,7 +58,8 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 1.  **Read the dataset "athlete_events.csv", and check the first few rows:**
 
     ```{r}
-    #Type your code here
+    athleteEvents = read_csv("data/athlete_events.csv")
+    head(athleteEvents)
     ```
 
 2.  **Data Description: Please use the necessary commands and codes, and briefly describe this data with a short writing paragraph answering the following questions.**
