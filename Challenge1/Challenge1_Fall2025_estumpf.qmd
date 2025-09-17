@@ -133,24 +133,21 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Outside the code chunk, please write a paragraph answering the following questions.
 
     print("*** Question 1 Output ***")
-    getUniqueCountForCol <- function(df, column) {
-      df |>
+    # Helper function to print the unique values count for a dataframe column
+    printUniqueCountForCol <- function(df, column) {
+      uniqueCount <- df |>
         select(all_of(column)) |>
         distinct() |>
         count()
+      print(sprintf(
+        'Unique %s: %s',
+        column,
+        uniqueCount
+      ))
     }
-    print(sprintf(
-      'Unique Sports: %s',
-      getUniqueCountForCol(athleteEvents, "Sport")
-    ))
-    print(sprintf(
-      'Unique Teams: %s',
-      getUniqueCountForCol(athleteEvents, "Team")
-    ))
-    print(sprintf(
-      'Unique Names: %s',
-      getUniqueCountForCol(athleteEvents, "Name")
-    ))
+    printUniqueCountForCol(athleteEvents, "Sport")
+    printUniqueCountForCol(athleteEvents, "Team")
+    printUniqueCountForCol(athleteEvents, "Name")
 
     print("")
     print("*** Question 2 Output ***")
