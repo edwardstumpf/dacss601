@@ -71,15 +71,18 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     athleteEventColumns <- colnames(athleteEvents)
 
     print("*** Question 1 Output ***")
-    athleteEventsDim <- dim(athleteEvents)
-    print(sprintf(
-        'Rows Count: %s', 
-        athleteEventsDim[1]
-    ))
-    print(sprintf(
-        'Columns Count: %s', 
-        athleteEventsDim[2]
-    ))
+    printDataframeDim <- function (df) {
+      dfDim <- dim(df)
+      print(sprintf(
+          'Rows Count: %s', 
+          dfDim[1]
+      ))
+      print(sprintf(
+          'Columns Count: %s', 
+          dfDim[2]
+      ))
+    }
+    printDataframeDim(athleteEvents)
 
     print("")
     print("*** Question 2 Output ***")
@@ -159,16 +162,16 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     print("")
     print("*** Question 3 Output ***")
     # TODO: How can I use the column name as a parameter that will work in summarise? Currently not working
-    summariseColumn <- function (df, column) {
-      df |>
-        summarise(
-          minimum_col = min(column, na.rm = TRUE),
-          mean_col = mean(column, na.rm = TRUE),
-          median_col = median(column, na.rm = TRUE),
-          max_col = max(column, na.rm = TRUE)
-        )
-    }
-    # Not working as intended
+    # Function is not working as intended
+    # summariseColumn <- function (df, column) {
+    #   df |>
+    #     summarise(
+    #       minimum_col = min(column, na.rm = TRUE),
+    #       mean_col = mean(column, na.rm = TRUE),
+    #       median_col = median(column, na.rm = TRUE),
+    #       max_col = max(column, na.rm = TRUE)
+    #     )
+    # }
     # summariseColumn(athleteEvents, Age)
 
     athleteEvents |>
@@ -223,18 +226,25 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 1.  **Read the dataset "paintings.csv".**
 
     ```{r}
-    paintings = read_csv("data/paintings.csv")
+    paintings <- read_csv("data/paintings.csv")
     ```
 
 2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
-
-    \(1\) What is the dimension of the data (# of rows and columns)?
 
     ```{r}
     #Type your code in the code chunk.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
+
+    print("*** Question 1 Output ***")
+    # Defined in Part 1. Run all chunks above to use
+    printDataframeDim(paintings)
+
+    print("")
+
     ```
+
+    \(1\) What is the dimension of the data (# of rows and columns)?
 
     \(2\) What do the rows and columns mean in this data?
 
