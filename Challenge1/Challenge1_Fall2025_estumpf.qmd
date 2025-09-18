@@ -98,7 +98,6 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     print("")
     print("*** Question 4 Output ***")
-
     for (colNum in seq_along(athleteEvents)) {
       naCount <- sum(is.na(athleteEvents[colNum]))
       if (naCount > 0) {
@@ -241,16 +240,40 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     printDataframeDim(paintings)
 
     print("")
+    print("*** Question 2 Output ***")
+    head(paintings)
 
+    print("")
+    print("*** Question 3 Output ***")
+    paintingsColumns <- colnames(paintings)
+    for (colNum in seq_along(paintings)) {
+      naCount <- sum(is.na(paintings[colNum]))
+      if (naCount > 0) {
+        columnName <- paintingsColumns[colNum]
+        print(sprintf(
+          "Column %s: %s NA values", 
+          columnName, 
+          naCount
+        ))
+      }
+    }
     ```
 
     \(1\) What is the dimension of the data (# of rows and columns)?
 
+    There are 81,918 rows and 6 columns
+
     \(2\) What do the rows and columns mean in this data?
+
+    The columns contain a unique identifier, a painting title, the painting's museum location, the artist, the year it was painted, and any identified subject matter
 
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
+    A painting with metadata
+
     \(4\) According to the lecture, is this a "tidy" data?
+
+    No, multiple columns (artist, year, and depicts) have NA values
 
 3.  **Data Transformation: use necessary commands and codes, and answer the following questions.**
 
