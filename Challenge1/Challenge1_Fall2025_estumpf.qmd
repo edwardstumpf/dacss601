@@ -98,6 +98,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     print("")
     print("*** Question 4 Output ***")
+    # TODO: can this be turned into a reusable function?
     for (colNum in seq_along(athleteEvents)) {
       naCount <- sum(is.na(athleteEvents[colNum]))
       if (naCount > 0) {
@@ -281,9 +282,15 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Type your code in the code chunk.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
+
+    print("*** Question 1 Output ***")
+    # Defined in Part 1. Run all chunks above to use
+    printUniqueCountForCol(paintings, "museum")
     ```
 
     \(1\) How many unique museums are in the data?
+
+    283
 
     \(2\) What are the range and average of the following variable "year"? Must use summarize().
 
