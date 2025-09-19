@@ -286,15 +286,40 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     print("*** Question 1 Output ***")
     # Defined in Part 1. Run all chunks above to use
     printUniqueCountForCol(paintings, "museum")
+
+    print("")
+    print("*** Question 2 Output ***")
+    paintings |>
+      summarise(
+        rangeYear = range(year, na.rm = TRUE),
+        averageYear = mean(year, na.rm = TRUE)
+      )
+
+    print("")
+    print("*** Question 3 Output ***")
+    countColumnNaValues <- function (df, column) {
+      df |>
+        select(all_of(column)) |> # TODO: how does piping work with multiple variables
+        is.na() |>
+        sum()
+    }
+    countColumnNaValues(paintings, "year")
+    countColumnNaValues(paintings, "depicts")
     ```
 
     \(1\) How many unique museums are in the data?
 
-    283
+    There are 283 unique museums in the dataset
 
     \(2\) What are the range and average of the following variable "year"? Must use summarize().
 
+    The earliest year is -2059 and the latest year is 2023. Presumably, the negative numbers indicate the year in BCE.
+
+    The average year is approximately 1865 (full computed value is 1865.109)
+
     \(3\) How many missing data (NA) are in the following variables: "year" and "depicts"? (tips: use is.na())
+
+    There are 16,524 missing year values, and 61,717 missing depicts values
 
     \(4\) Which museum have the most paintings of Salvador Dalí?
 
