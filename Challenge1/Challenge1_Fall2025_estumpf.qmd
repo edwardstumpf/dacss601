@@ -291,7 +291,8 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     print("*** Question 2 Output ***")
     paintings |>
       summarise(
-        rangeYear = range(year, na.rm = TRUE),
+        minYear = min(year, na.rm = TRUE),
+        maxYear = max(year, na.rm = TRUE),
         averageYear = mean(year, na.rm = TRUE)
       )
 
@@ -299,12 +300,22 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     print("*** Question 3 Output ***")
     countColumnNaValues <- function (df, column) {
       df |>
-        select(all_of(column)) |> # TODO: how does piping work with multiple variables
+        select(all_of(column)) |>
         is.na() |>
         sum()
     }
     countColumnNaValues(paintings, "year")
     countColumnNaValues(paintings, "depicts")
+
+    print("")
+    print("*** Question 4 Output ***")
+    paintings |>
+      filter(artist == "Salvador Dalí") |>
+      group_by(museum) |>
+      summarise(
+        daliCount = n()
+      )
+
     ```
 
     \(1\) How many unique museums are in the data?
@@ -322,6 +333,8 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     There are 16,524 missing year values, and 61,717 missing depicts values
 
     \(4\) Which museum have the most paintings of Salvador Dalí?
+
+    The Salvador Dalí Museum with 104 paintings.
 
 ## Part 3. The Baby Names Dataset
 
