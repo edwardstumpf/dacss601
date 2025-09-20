@@ -59,37 +59,21 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     ```{r}
     athleteEvents = read_csv("data/athlete_events.csv")
-    head(athleteEvents)
     ```
 
 -   **Data Description: Please use the necessary commands and codes, and briefly describe this data with a short writing paragraph answering the following questions.**
+
+    \(1\) What is the dimension of the data (# of rows and columns)?
+
+    There are 271,116 rows and 15 columns
 
     ```{r}
     #Type your code in the code chunk. 
 
     #Outside the code chunk, please write a paragraph answering the following questions.
-    athleteEventColumns <- colnames(athleteEvents)
 
-    print("*** Question 1 Output ***")
-    printDataframeDim <- function (df) {
-      dfDim <- dim(df)
-      print(sprintf(
-          'Rows Count: %s', 
-          dfDim[1]
-      ))
-      print(sprintf(
-          'Columns Count: %s', 
-          dfDim[2]
-      ))
-    }
-    printDataframeDim(athleteEvents)
-
-    print("")
     print("*** Question 2 Output ***")
-    print(sprintf(
-        'Columns: %s', 
-        paste(athleteEventColumns, collapse=", ")
-    ))
+    head(athleteEvents)
     print(sprintf(
         'Year Range: %s - %s', 
         min(athleteEvents[10]),
@@ -99,6 +83,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     print("")
     print("*** Question 4 Output ***")
     # TODO: can this be turned into a reusable function?
+    athleteEventColumns <- colnames(athleteEvents)
     for (colNum in seq_along(athleteEvents)) {
       naCount <- sum(is.na(athleteEvents[colNum]))
       if (naCount > 0) {
@@ -112,17 +97,13 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     }
     ```
 
-    \(1\) What is the dimension of the data (# of rows and columns)?
-
-    There are 271,116 rows and 15 columns
-
     \(2\) What do the rows and columns mean in this data?
 
     This dataset appears to house data about Olympic athletes from 1896 to 2016. It includes data about an athlete's name, sex, age, height, weight, team, nationality/country, Olympic Games name, Olympic Games year, Olympic sport, official Olympic event name, and what medal the athlete won (if any)
 
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
-    The unit of observation is Olympic athletes, their Olympic events, and any medals the athlete won in the specific event
+    The unit of observation is an Olympic athlete.
 
     \(4\) According to the lecture, is this a "tidy" data?
 
@@ -231,16 +212,15 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
 2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
 
+    \(1\) What is the dimension of the data (# of rows and columns)?
+
+    There are 81,918 rows and 6 columns
+
     ```{r}
     #Type your code in the code chunk.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
-    print("*** Question 1 Output ***")
-    # Defined in Part 1. Run all chunks above to use
-    printDataframeDim(paintings)
-
-    print("")
     print("*** Question 2 Output ***")
     head(paintings)
 
@@ -260,17 +240,13 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     }
     ```
 
-    \(1\) What is the dimension of the data (# of rows and columns)?
-
-    There are 81,918 rows and 6 columns
-
     \(2\) What do the rows and columns mean in this data?
 
     The columns contain a unique identifier, a painting title, the painting's museum location, the artist, the year it was painted, and any identified subject matter
 
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
-    A painting with metadata
+    A painting
 
     \(4\) According to the lecture, is this a "tidy" data?
 
@@ -347,6 +323,8 @@ babyNames = read_csv("data/babynames.csv")
 2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
 
     \(1\) What is the dimension of the data (# of rows and columns)?
+
+    There are 2,084,710 rows and 4 columns.
 
     ```{r}
     #Type your code in the code chunk.
