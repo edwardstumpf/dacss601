@@ -111,7 +111,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     # Question 2
     print(sprintf(
         'Years Recorded: %s', 
-        max(athleteEvents[10]) - min(athleteEvents[10])
+        max(athleteEvents['Year']) - min(athleteEvents['Year'])
     ))
 
     # Question 3
@@ -232,7 +232,6 @@ Find the `_data` folder, then use the correct R command to read the datasets.
       summarise_all(countNaValues)
 
     # Question 4
-    print("*** Question 4 Output ***")
     daliByMuseum = paintings |>
       filter(artist == "Salvador Dalí") |>
       group_by(museum) |>
@@ -280,7 +279,7 @@ babyNames = read_csv("data/babynames.csv")
     # Question 1
     dim(babyNames)
 
-    print("*** Question 2 Output ***")
+    # Question 2
     head(babyNames)
     babyNames |>
       summarise(
@@ -295,7 +294,7 @@ babyNames = read_csv("data/babynames.csv")
 
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
-    A name for a baby.
+    A name for a baby with additional metadata about sex and frequency by year
 
     \(4\) According to the lecture, is this a "tidy" data?
 
@@ -309,6 +308,7 @@ babyNames = read_csv("data/babynames.csv")
 
     ```{r}
     #Type your code in the code chunk.
+    # TODO: can this be combined?
     babyNames |>
       distinct(Name, Sex) |>
       group_by(Sex) |>
@@ -327,7 +327,10 @@ babyNames = read_csv("data/babynames.csv")
     142 years
 
     ```{r}
-    max(babyNames['Year']) - min(babyNames['Year'])
+    print(sprintf(
+        'Years Recorded: %s', 
+        max(babyNames['Year']) - min(babyNames['Year'])
+    ))
     ```
 
     \(3\) Summarize the min, mean, median, and max of "Occurrence". (Must use summarize())
