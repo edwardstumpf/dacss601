@@ -221,7 +221,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
       )
 
     # Question 3
-    # TODO: can this be simplified further?
+    # Future: can this be simplified further?
     countNaValues <- function (column) {
       column |>
         is.na() |>
@@ -232,13 +232,12 @@ Find the `_data` folder, then use the correct R command to read the datasets.
       summarise_all(countNaValues)
 
     # Question 4
-    daliByMuseum = paintings |>
+    paintings |>
       filter(artist == "Salvador Dalí") |>
       group_by(museum) |>
       summarise(
         daliCount = n()
       )
-    view(daliByMuseum)
     ```
 
     \(1\) How many unique museums are in the data?
@@ -308,7 +307,7 @@ babyNames = read_csv("data/babynames.csv")
 
     ```{r}
     #Type your code in the code chunk.
-    # TODO: can this be combined?
+    # Future: can these be combined?
     babyNames |>
       distinct(Name, Sex) |>
       group_by(Sex) |>
@@ -361,7 +360,7 @@ babyNames = read_csv("data/babynames.csv")
     yearToDecade <- function (value) {
       floor(value / 10) * 10
     }
-    occurrencesByDecade = babyNames |>
+    babyNames |>
       mutate(
         Decade = yearToDecade(Year)
       ) |>
@@ -372,5 +371,4 @@ babyNames = read_csv("data/babynames.csv")
         medianOccurrences = median(Occurrences),
         maxOccurrences = max(Occurrences)
       )
-    view(occurrencesByDecade)
     ```
