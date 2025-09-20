@@ -1,0 +1,374 @@
+---
+title: "Challenge_1: Data Import, Description, and Transformation(1)"
+author: "Edward Augustine Stumpf"
+description: ""
+date: "9-19-2025"
+format: 
+  html: 
+    embed-resources: true
+    self-contained-math: true
+editor: visual
+---
+
+**Make sure you change the author's name and date in the YAMAL header (the chunk above)**
+
+## Before you start: Create your R quarto project and submit the standalone .html file.
+
+Please use Challenge 0 on Canvas as a practice of rendering html files. Find how to make standalone html files in week 1 lecture recordings.
+
+## Setup
+
+If you have not installed the following packages, please install them before loading them.
+
+```{r}
+library(tidyverse)
+library(readr)
+library(readxl)
+library(haven) #for loading other datafiles (SAS, STATA, SPSS, etc.)
+```
+
+You will see a warning message saying "Conflicts: tidyverse_conflicts() – dplyr::filter() and dplyr::lag()". This message means that once you read the packages:
+
+-   If you use `filter()`, the `filter()` from `dplyr` will be used, rather than the `filter()` from base R (`stats`). Similarly, if you use `lag()`, it will be the `lag()` from `dplyr`.
+
+Generally, we can ignore this warning message.
+
+## Challenge Overview
+
+This first challenge aims to practice the following skill sets:
+
+1.  Read datasets in different file types;
+
+2.  Describe the datasets;
+
+3.  Exploring a few basic functions of data transformation and wrangling and present some descriptive statistics (such as min, max, and median).
+
+There will be coding components (reading datasets and data transformation) and writing components (describing the datasets and some statistical information). Please read the instructions for each part and complete your challenges.
+
+There are three datasets provided in this challenge. Please download the following dataset files from Canvas and save them to a folder under your working directory (i.e.: “yourworkingdiectory_data”; you should also save all your R scripts and quarto files of a project in the same working directory). If you don’t have a folder to store the datasets, please create one.
+
+-   athlete_events.csv ⭐
+-   paintings.csv ⭐
+-   babynames.csv ⭐⭐
+
+Find the `_data` folder, then use the correct R command to read the datasets.
+
+## Part 1. The Athlete Events Dataset
+
+-   **Read the dataset "athlete_events.csv", and check the first few rows:**
+
+    ```{r}
+    athleteEvents = read_csv("data/athlete_events.csv")
+    ```
+
+-   **Data Description: Please use the necessary commands and codes, and briefly describe this data with a short writing paragraph answering the following questions.**
+
+    \(1\) What is the dimension of the data (# of rows and columns)?
+
+    There are 271,116 rows and 15 columns
+
+    ```{r}
+    #Type your code in the code chunk. 
+
+    #Outside the code chunk, please write a paragraph answering the following questions.
+
+    # Question 1
+    dim(athleteEvents)
+
+    # Question 2
+    head(athleteEvents)
+    athleteEvents |>
+      summarise(
+        minYear = min(Year, na.rm = TRUE),
+        maxYear = max(Year, na.rm = TRUE)
+      )
+    ```
+
+    \(2\) What do the rows and columns mean in this data?
+
+    This dataset appears to house data about Olympic athletes from 1896 to 2016. It includes data about an athlete's name, sex, age, height, weight, team, nationality/country, Olympic Games name, Olympic Games year, Olympic sport, official Olympic event name, and what medal the athlete won (if any)
+
+    \(3\) What is the unit of observation? In other words, what does each case mean in this data?
+
+    The unit of observation is an Olympic athlete with their Olympic competition related metadata.
+
+    \(4\) According to the lecture, is this a "tidy" data?
+
+    Yes, because this is a basic CSV file with only a single header row.
+
+-   **Data Transformation: use necessary commands and codes and answer the following questions.**
+
+    ```{r}
+    #Type your code in the code chunk.
+
+    #Outside the code chunk, please write a paragraph answering the following questions.
+
+    # Question 1
+    athleteEvents |>
+      select("Sport", "Team", "Name") |>
+      summarise_all(n_distinct)
+
+    # Question 2
+    print(sprintf(
+        'Years Recorded: %s', 
+        max(athleteEvents['Year']) - min(athleteEvents['Year'])
+    ))
+
+    # Question 3
+    athleteEvents |>
+      summarise(
+        minimum_age = min(Age, na.rm = TRUE),
+        mean_age = mean(Age, na.rm = TRUE),
+        median_age = median(Age, na.rm = TRUE),
+        max_age = max(Age, na.rm = TRUE)
+      )
+
+    athleteEvents |>
+      summarise(
+        minimum_weight = min(Weight, na.rm = TRUE),
+        mean_weight = mean(Weight, na.rm = TRUE),
+        median_weight = median(Weight, na.rm = TRUE),
+        max_weight = max(Weight, na.rm = TRUE)
+      )
+    ```
+
+    \(1\) How many unique sports, unique teams, and total unique names are in the data?
+
+    There are 66 unique sports, 1,184 unique teams, and 134,731 unique names
+
+    \(2\) How many years does this data record?
+
+    120 years
+
+    \(3\) Summarize the min, mean, median, and max of "Age" and "Weight". (Must use summarize())
+
+    Age:
+
+    -   Min: 10
+
+    -   Mean: 25.5569
+
+    -   Median: 24
+
+    -   Max: 97
+
+    Weight
+
+    -   Min: 25
+
+    -   Mean: 70.70239
+
+    -   Median: 70
+
+    -   Max: 214
+
+## Part 2. The Painting Dataset
+
+1.  **Read the dataset "paintings.csv".**
+
+    ```{r}
+    paintings <- read_csv("data/paintings.csv")
+    ```
+
+2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
+
+    \(1\) What is the dimension of the data (# of rows and columns)?
+
+    There are 81,918 rows and 6 columns
+
+    ```{r}
+    #Type your code in the code chunk.
+
+    #Outside the code chunk, please write a paragraph answering the following questions.
+
+    # Question 1
+    dim(paintings)
+
+    # Question 2
+    head(paintings)
+    ```
+
+    \(2\) What do the rows and columns mean in this data?
+
+    The columns contain a unique identifier, a painting title, the painting's museum location, the artist, the year it was painted, and any identified subject matter
+
+    \(3\) What is the unit of observation? In other words, what does each case mean in this data?
+
+    A painting with artist and museum location metadata.
+
+    \(4\) According to the lecture, is this a "tidy" data?
+
+    Yes, because this is a basic CSV file with only a single header row.
+
+3.  **Data Transformation: use necessary commands and codes, and answer the following questions.**
+
+    ```{r}
+    #Type your code in the code chunk.
+
+    #Outside the code chunk, please write a paragraph answering the following questions.
+
+    # Question 1
+    paintings |>
+      select(museum) |>
+      summarise_all(n_distinct)
+
+    # Question 2
+    paintings |>
+      summarise(
+        minYear = min(year, na.rm = TRUE),
+        maxYear = max(year, na.rm = TRUE),
+        averageYear = mean(year, na.rm = TRUE)
+      )
+
+    # Question 3
+    # Future: can this be simplified further?
+    countNaValues <- function (column) {
+      column |>
+        is.na() |>
+        sum()
+    }
+    paintings |>
+      select(year, depicts) |>
+      summarise_all(countNaValues)
+
+    # Question 4
+    paintings |>
+      filter(artist == "Salvador Dalí") |>
+      group_by(museum) |>
+      summarise(
+        daliCount = n()
+      )
+    ```
+
+    \(1\) How many unique museums are in the data?
+
+    There are 283 unique museums in the dataset
+
+    \(2\) What are the range and average of the following variable "year"? Must use summarize().
+
+    The earliest year is -2059 and the latest year is 2023. Presumably, the negative numbers indicate the year in BCE.
+
+    The average year is approximately 1865 (full computed value is 1865.109)
+
+    \(3\) How many missing data (NA) are in the following variables: "year" and "depicts"? (tips: use is.na())
+
+    There are 16,524 missing year values, and 61,717 missing depicts values
+
+    \(4\) Which museum have the most paintings of Salvador Dalí?
+
+    The Salvador Dalí Museum with 104 paintings.
+
+## Part 3. The Baby Names Dataset
+
+1.  **Read the dataset "babynames.csv":**
+
+```{r}
+babyNames = read_csv("data/babynames.csv")
+```
+
+2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
+
+    \(1\) What is the dimension of the data (# of rows and columns)?
+
+    There are 2,084,710 rows and 4 columns.
+
+    ```{r}
+    #Type your code in the code chunk.
+
+    # Question 1
+    dim(babyNames)
+
+    # Question 2
+    head(babyNames)
+    babyNames |>
+      summarise(
+        minYear = min(Year, na.rm = TRUE),
+        maxYear = max(Year, na.rm = TRUE)
+      )
+    ```
+
+    \(2\) What do the rows and columns mean in this data?
+
+    This dataset contains male and female names for babies with the number of occurrences per year. The dataset ranges from 1880 to 2022.
+
+    \(3\) What is the unit of observation? In other words, what does each case mean in this data?
+
+    A name for a baby with additional metadata about sex and frequency by year
+
+    \(4\) According to the lecture, is this a "tidy" data?
+
+    Yes, because this is a basic CSV file with only a single header row.
+
+3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
+
+    \(1\) How many unique male names, unique female names, and total unique names are in the data? (tips: there are multiple ways of doing this, either using the `baseR` function or the `dplyr` function.)
+
+    There are 102,447 unique names. There are 70,225 unique female names and 43,653 unique male names
+
+    ```{r}
+    #Type your code in the code chunk.
+    # Future: can these be combined?
+    babyNames |>
+      distinct(Name, Sex) |>
+      group_by(Sex) |>
+      summarise(
+        uniqueNames = n()
+      )
+    babyNames |>
+      distinct(Name) |>
+      summarise(
+        uniqueNames = n()
+      )
+    ```
+
+    \(2\) How many years of names does this data record?
+
+    142 years
+
+    ```{r}
+    print(sprintf(
+        'Years Recorded: %s', 
+        max(babyNames['Year']) - min(babyNames['Year'])
+    ))
+    ```
+
+    \(3\) Summarize the min, mean, median, and max of "Occurrence". (Must use summarize())
+
+    The minimum occurrences is 5, the average occurrences is \~175 (175.2112), the median occurrences is 12, and the maximum occurrences is 99,693.
+
+    ```{r}
+    babyNames |>
+      summarise(
+        minOccurrences = min(Occurrences),
+        meanOccurrences = mean(Occurrences),
+        medianOccurrences = median(Occurrences),
+        maxOccurrences = max(Occurrences)
+      )
+    ```
+
+    \(4\) (Optional; the easiest way to complete this task requires the `lubridate` package; you can try it again after week 4) Summarize the min, mean, median, and max of "Occurrence" by decade. See the code and output above.
+
+    ```{r}
+    #Type your code in the code chunk.
+
+    # Overview
+    # - Create new Decade column by converting years into their base decade
+    # - group by Decade column
+    # - summarise
+
+    # Future: how would lubridate package handle this?
+    yearToDecade <- function (value) {
+      floor(value / 10) * 10
+    }
+    babyNames |>
+      mutate(
+        Decade = yearToDecade(Year)
+      ) |>
+      group_by(Decade) |>
+      summarise(
+        minOccurrences = min(Occurrences),
+        meanOccurrences = mean(Occurrences),
+        medianOccurrences = median(Occurrences),
+        maxOccurrences = max(Occurrences)
+      )
+    ```
