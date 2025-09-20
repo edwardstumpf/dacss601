@@ -328,36 +328,93 @@ babyNames = read_csv("data/babynames.csv")
 
     ```{r}
     #Type your code in the code chunk.
+
+    print("*** Question 2 Output ***")
+    head(babyNames)
+    print(sprintf(
+        'Year Range: %s - %s', 
+        min(babyNames["Year"]),
+        max(babyNames["Year"])
+    ))
+
+    print("")
+    print("*** Question 3 Output ***")
+    babyColumnNames <- colnames(babyNames)
+    for (index in seq_along(babyNames)) {
+      naCount <- sum(is.na(babyNames[index]))
+      if (naCount > 0) {
+        columnName <- babyColumnNames[index]
+        print(sprintf(
+          "Column %s: %s NA values", 
+          columnName, 
+          naCount
+        ))
+      }
+    }
     ```
 
     \(2\) What do the rows and columns mean in this data?
 
+    This dataset contains male and female names for babies with the number of occurrences per year. The dataset ranges from 1880 to 2022.
+
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
+    A name for a baby.
+
     \(4\) According to the lecture, is this a "tidy" data?
+
+    Yes! No columns in the dataset have NA values.
 
 3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
 
     \(1\) How many unique male names, unique female names, and total unique names are in the data? (tips: there are multiple ways of doing this, either using the `baseR` function or the `dplyr` function.)
 
+    There are 102,447 unique names. There are 70,225 unique female names and 43,653 unique male names
+
     ```{r}
     #Type your code in the code chunk.
+    babyNames |>
+      distinct(Name, Sex) |>
+      group_by(Sex) |>
+      summarise(
+        uniqueNames = n()
+      )
+    babyNames |>
+      distinct(Name) |>
+      summarise(
+        uniqueNames = n()
+      )
     ```
 
     \(2\) How many years of names does this data record?
 
+    142 years
+
     ```{r}
-    #Type your code in the code chunk.
+    max(babyNames['Year']) - min(babyNames['Year'])
     ```
 
     \(3\) Summarize the min, mean, median, and max of "Occurrence". (Must use summarize())
 
+    The minimum occurrences is 5, the average occurrences is \~175 (175.2112), the median occurrences is 12, and the maximum occurrences is 99,693.
+
     ```{r}
-    #Type your code in the code chunk.
+    babyNames |>
+      summarise(
+        minOccurrences = min(Occurrences),
+        meanOccurrences = mean(Occurrences),
+        medianOccurrences = median(Occurrences),
+        maxOccurrences = max(Occurrences)
+      )
     ```
 
     \(4\) (Optional; the easiest way to complete this task requires the `lubridate` package; you can try it again after week 4) Summarize the min, mean, median, and max of "Occurrence" by decade. See the code and output above.
 
     ```{r}
     #Type your code in the code chunk.
+
+    # Thoughts
+    # - convert years into their base decade via Lubridate (somehow) and mapping
+    # - group by decade
+    # - summarise
     ```
