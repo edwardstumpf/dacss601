@@ -80,25 +80,6 @@ Find the `_data` folder, then use the correct R command to read the datasets.
         min(athleteEvents['Year']),
         max(athleteEvents['Year'])
     ))
-
-    # Question 4
-    print("*** Question 4 Output ***")
-    # Helper function to output column names with their NA value count
-    outputNaColumns <- function (df) {
-      dfColumns <- colnames(df)
-      for (index in seq_along(df)) {
-        naCount <- sum(is.na(df[index]))
-        if (naCount > 0) {
-          columnName <- dfColumns[index]
-          print(sprintf(
-            "Column %s: %s NA values", 
-            columnName, 
-            naCount
-          ))
-        }
-      }
-    }
-    outputNaColumns(athleteEvents)
     ```
 
     \(2\) What do the rows and columns mean in this data?
@@ -111,7 +92,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     \(4\) According to the lecture, is this a "tidy" data?
 
-    No, multiple columns (Age, Height, and Weight) contain NA values. Note: the Medal column also contains NA values, but this is used to indicate that a given athlete didn't medal in the event.
+    Yes, because this is a basic CSV file with only a single header row.
 
 -   **Data Transformation: use necessary commands and codes and answer the following questions.**
 
@@ -228,10 +209,6 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     # Question 2
     head(paintings)
-
-    # Question 3
-    print("*** Question 3 Output ***")
-    outputNaColumns(paintings) # Helper function from Part 1.1
     ```
 
     \(2\) What do the rows and columns mean in this data?
@@ -244,7 +221,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     \(4\) According to the lecture, is this a "tidy" data?
 
-    No, multiple columns (artist, year, and depicts) have NA values
+    Yes, because this is a basic CSV file with only a single header row.
 
 3.  **Data Transformation: use necessary commands and codes, and answer the following questions.**
 
@@ -330,10 +307,6 @@ babyNames = read_csv("data/babynames.csv")
         min(babyNames["Year"]),
         max(babyNames["Year"])
     ))
-
-    print("")
-    print("*** Question 3 Output ***")
-    outputNaColumns(babyNames) # Helper function from Part 1.1
     ```
 
     \(2\) What do the rows and columns mean in this data?
@@ -346,7 +319,7 @@ babyNames = read_csv("data/babynames.csv")
 
     \(4\) According to the lecture, is this a "tidy" data?
 
-    Yes! No columns in the dataset have NA values.
+    Yes, because this is a basic CSV file with only a single header row.
 
 3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
 
