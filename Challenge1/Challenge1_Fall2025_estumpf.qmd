@@ -72,6 +72,9 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
+    # Question 1
+    dim(athleteEvents)
+
     # Question 2
     head(athleteEvents)
     athleteEvents |>
@@ -87,7 +90,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
-    The unit of observation is an Olympic athlete.
+    The unit of observation is an Olympic athlete with their Olympic competition related metadata.
 
     \(4\) According to the lecture, is this a "tidy" data?
 
@@ -101,45 +104,17 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Outside the code chunk, please write a paragraph answering the following questions.
 
     # Question 1
-    print("*** Question 1 Output ***")
-    # Helper function to print the unique values count for a dataframe column
-    printUniqueCountForCol <- function(df, column) {
-      uniqueCount <- df |>
-        select(all_of(column)) |>
-        distinct() |>
-        count()
-      print(sprintf(
-        'Unique %s: %s',
-        column,
-        uniqueCount
-      ))
-    }
-    printUniqueCountForCol(athleteEvents, "Sport")
-    printUniqueCountForCol(athleteEvents, "Team")
-    printUniqueCountForCol(athleteEvents, "Name")
+    athleteEvents |>
+      select("Sport", "Team", "Name") |>
+      summarise_all(n_distinct)
 
     # Question 2
-    print("*** Question 2 Output ***")
     print(sprintf(
         'Years Recorded: %s', 
         max(athleteEvents[10]) - min(athleteEvents[10])
     ))
 
     # Question 3
-    print("*** Question 3 Output ***")
-    # TODO: How can I use the column name as a parameter that will work in summarise? Currently not working
-    # Function is not working as intended
-    # summariseColumn <- function (df, column) {
-    #   df |>
-    #     summarise(
-    #       minimum_col = min(column, na.rm = TRUE),
-    #       mean_col = mean(column, na.rm = TRUE),
-    #       median_col = median(column, na.rm = TRUE),
-    #       max_col = max(column, na.rm = TRUE)
-    #     )
-    # }
-    # summariseColumn(athleteEvents, Age)
-
     athleteEvents |>
       summarise(
         minimum_age = min(Age, na.rm = TRUE),
@@ -206,6 +181,9 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
+    # Question 1
+    dim(paintings)
+
     # Question 2
     head(paintings)
     ```
@@ -216,7 +194,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     \(3\) What is the unit of observation? In other words, what does each case mean in this data?
 
-    A painting
+    A painting with artist and museum location metadata.
 
     \(4\) According to the lecture, is this a "tidy" data?
 
@@ -230,11 +208,11 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Outside the code chunk, please write a paragraph answering the following questions.
 
     # Question 1
-    print("*** Question 1 Output ***")
-    printUniqueCountForCol(paintings, "museum") # Helper function from Part 1
+    paintings |>
+      select(museum) |>
+      summarise_all(n_distinct)
 
     # Question 2
-    print("*** Question 2 Output ***")
     paintings |>
       summarise(
         minYear = min(year, na.rm = TRUE),
@@ -243,15 +221,15 @@ Find the `_data` folder, then use the correct R command to read the datasets.
       )
 
     # Question 3
-    print("*** Question 3 Output ***")
-    countColumnNaValues <- function (df, column) {
-      df |>
-        select(all_of(column)) |>
+    # TODO: can this be simplified further?
+    countNaValues <- function (column) {
+      column |>
         is.na() |>
         sum()
     }
-    countColumnNaValues(paintings, "year")
-    countColumnNaValues(paintings, "depicts")
+    paintings |>
+      select(year, depicts) |>
+      summarise_all(countNaValues)
 
     # Question 4
     print("*** Question 4 Output ***")
@@ -299,13 +277,16 @@ babyNames = read_csv("data/babynames.csv")
     ```{r}
     #Type your code in the code chunk.
 
+    # Question 1
+    dim(babyNames)
+
     print("*** Question 2 Output ***")
     head(babyNames)
-    print(sprintf(
-        'Year Range: %s - %s', 
-        min(babyNames["Year"]),
-        max(babyNames["Year"])
-    ))
+    babyNames |>
+      summarise(
+        minYear = min(Year, na.rm = TRUE),
+        maxYear = max(Year, na.rm = TRUE)
+      )
     ```
 
     \(2\) What do the rows and columns mean in this data?
