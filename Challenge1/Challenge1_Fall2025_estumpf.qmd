@@ -414,7 +414,10 @@ babyNames = read_csv("data/babynames.csv")
     #Type your code in the code chunk.
 
     # Thoughts
-    # - convert years into their base decade via Lubridate (somehow) and mapping
+    # - convert years into their base decade via signif(yearValue, 3) and mapping
     # - group by decade
     # - summarise
+
+    yearValue <- 2021
+    signif(yearValue, 3)
     ```
