@@ -73,13 +73,12 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     #Outside the code chunk, please write a paragraph answering the following questions.
 
     # Question 2
-    print("*** Question 2 Output ***")
     head(athleteEvents)
-    print(sprintf(
-        'Year Range: %s - %s', 
-        min(athleteEvents['Year']),
-        max(athleteEvents['Year'])
-    ))
+    athleteEvents |>
+      summarise(
+        minYear = min(Year, na.rm = TRUE),
+        maxYear = max(Year, na.rm = TRUE)
+      )
     ```
 
     \(2\) What do the rows and columns mean in this data?
