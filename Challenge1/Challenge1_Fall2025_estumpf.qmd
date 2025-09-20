@@ -2,7 +2,7 @@
 title: "Challenge_1: Data Import, Description, and Transformation(1)"
 author: "Edward Augustine Stumpf"
 description: ""
-date: "9-16-2025"
+date: "9-19-2025"
 format: 
   html: 
     embed-resources: true
@@ -72,29 +72,33 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
+    # Question 2
     print("*** Question 2 Output ***")
     head(athleteEvents)
     print(sprintf(
         'Year Range: %s - %s', 
-        min(athleteEvents[10]),
-        max(athleteEvents[10])
+        min(athleteEvents['Year']),
+        max(athleteEvents['Year'])
     ))
 
-    print("")
+    # Question 4
     print("*** Question 4 Output ***")
-    # TODO: can this be turned into a reusable function?
-    athleteEventColumns <- colnames(athleteEvents)
-    for (colNum in seq_along(athleteEvents)) {
-      naCount <- sum(is.na(athleteEvents[colNum]))
-      if (naCount > 0) {
-        columnName <- athleteEventColumns[colNum]
-        print(sprintf(
-          "Column %s: %s NA values", 
-          columnName, 
-          naCount
-        ))
+    # Helper function to output column names with their NA value count
+    outputNaColumns <- function (df) {
+      dfColumns <- colnames(df)
+      for (index in seq_along(df)) {
+        naCount <- sum(is.na(df[index]))
+        if (naCount > 0) {
+          columnName <- dfColumns[index]
+          print(sprintf(
+            "Column %s: %s NA values", 
+            columnName, 
+            naCount
+          ))
+        }
       }
     }
+    outputNaColumns(athleteEvents)
     ```
 
     \(2\) What do the rows and columns mean in this data?
@@ -116,6 +120,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
+    # Question 1
     print("*** Question 1 Output ***")
     # Helper function to print the unique values count for a dataframe column
     printUniqueCountForCol <- function(df, column) {
@@ -133,14 +138,14 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     printUniqueCountForCol(athleteEvents, "Team")
     printUniqueCountForCol(athleteEvents, "Name")
 
-    print("")
+    # Question 2
     print("*** Question 2 Output ***")
     print(sprintf(
         'Years Recorded: %s', 
         max(athleteEvents[10]) - min(athleteEvents[10])
     ))
 
-    print("")
+    # Question 3
     print("*** Question 3 Output ***")
     # TODO: How can I use the column name as a parameter that will work in summarise? Currently not working
     # Function is not working as intended
@@ -221,23 +226,12 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
-    print("*** Question 2 Output ***")
+    # Question 2
     head(paintings)
 
-    print("")
+    # Question 3
     print("*** Question 3 Output ***")
-    paintingsColumns <- colnames(paintings)
-    for (colNum in seq_along(paintings)) {
-      naCount <- sum(is.na(paintings[colNum]))
-      if (naCount > 0) {
-        columnName <- paintingsColumns[colNum]
-        print(sprintf(
-          "Column %s: %s NA values", 
-          columnName, 
-          naCount
-        ))
-      }
-    }
+    outputNaColumns(paintings) # Helper function from Part 1.1
     ```
 
     \(2\) What do the rows and columns mean in this data?
@@ -259,11 +253,11 @@ Find the `_data` folder, then use the correct R command to read the datasets.
 
     #Outside the code chunk, please write a paragraph answering the following questions.
 
+    # Question 1
     print("*** Question 1 Output ***")
-    # Defined in Part 1. Run all chunks above to use
-    printUniqueCountForCol(paintings, "museum")
+    printUniqueCountForCol(paintings, "museum") # Helper function from Part 1
 
-    print("")
+    # Question 2
     print("*** Question 2 Output ***")
     paintings |>
       summarise(
@@ -272,7 +266,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
         averageYear = mean(year, na.rm = TRUE)
       )
 
-    print("")
+    # Question 3
     print("*** Question 3 Output ***")
     countColumnNaValues <- function (df, column) {
       df |>
@@ -283,7 +277,7 @@ Find the `_data` folder, then use the correct R command to read the datasets.
     countColumnNaValues(paintings, "year")
     countColumnNaValues(paintings, "depicts")
 
-    print("")
+    # Question 4
     print("*** Question 4 Output ***")
     daliByMuseum = paintings |>
       filter(artist == "Salvador Dalí") |>
@@ -339,18 +333,7 @@ babyNames = read_csv("data/babynames.csv")
 
     print("")
     print("*** Question 3 Output ***")
-    babyColumnNames <- colnames(babyNames)
-    for (index in seq_along(babyNames)) {
-      naCount <- sum(is.na(babyNames[index]))
-      if (naCount > 0) {
-        columnName <- babyColumnNames[index]
-        print(sprintf(
-          "Column %s: %s NA values", 
-          columnName, 
-          naCount
-        ))
-      }
-    }
+    outputNaColumns(babyNames) # Helper function from Part 1.1
     ```
 
     \(2\) What do the rows and columns mean in this data?
