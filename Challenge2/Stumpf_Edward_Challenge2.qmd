@@ -38,6 +38,7 @@ This challenge blends **coding** (transformations, reshaping, descriptive summar
 
 ```{r}
 library(tidyverse)
+library(stringr)
 library(readr)
 library(readxl)
 library(haven) #for loading other datafiles (SAS, STATA, SPSS, etc.)
@@ -57,30 +58,60 @@ athleteEvents = read_csv("data/athlete_events.csv")
 
     ```{r}
     #Type your code here
+    athleteEvents <- athleteEvents |>
+      mutate(YearOfBirth = Year - Age, .after=Age)
+    head(athleteEvents)
     ```
 
     \(2\) Create a new column named "Senior" using the information in the "Age" column. If the athlete is 40 years or older, label them as "senior"; if the athlete is younger than 40, label them as "junior".
 
     ```{r}
-    #Type your code here
+    #Type your code 
+    athleteEvents <- athleteEvents |>
+      mutate(Senior = case_when(
+        Age >= 40 ~ "senior",
+        Age < 40 ~ "junior",
+        .default = NA
+      ),
+      .before = YearOfBirth)
+    head(athleteEvents)
     ```
 
     \(3\) Recode the "Medal" column into a new numeric variable: if the athlete did not win a medal (NA), recode it as 0; recode it as 1 for a bronze medal, 2 for a silver medal, and 3 for a gold medal.
 
     ```{r}
     #Type your code here
+    athleteEvents <- athleteEvents |>
+      mutate(Medal = recode(
+        Medal,
+        Bronze = 1,
+        Silver = 2,
+        Gold = 3,
+        .missing = 0
+      ))
+    view(athleteEvents)
     ```
 
     \(4\) Move the column "YearOfBirth", "Senior", and "Medal" right after the "Name" column.
 
     ```{r}
     #Type your code here
+    athleteEvents <- athleteEvents |>
+      relocate(
+        YearOfBirth, Senior, Medal, .after = Name
+      )
+    head(athleteEvents)
     ```
 
     \(6\) Answer the question: What is the data type of the "Medal" column before and after recoding?
 
+    -   Before: character
+
+    -   After: numeric
+
 ```{r}
 #Type your code here
+sapply(athleteEvents, typeof)
 ```
 
 ## **Part 2. the Paintings Data:**
