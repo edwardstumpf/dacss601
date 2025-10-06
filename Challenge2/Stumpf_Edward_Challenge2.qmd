@@ -107,7 +107,7 @@ athleteEvents = read_csv("data/athlete_events.csv")
 
     -   Before: character
 
-    -   After: numeric
+    -   After: double
 
 ```{r}
 #Type your code here
@@ -128,24 +128,47 @@ paintings = read_csv("data/paintings.csv")
 
     ```{r}
     #Type your code here
+    paintings <- paintings |>
+      mutate(woman = case_when(
+        grepl("woman", depicts) ~ 1,
+        .default = 0
+      ), .after = depicts)
+    head(paintings)
     ```
 
     \(2\) Recode the "year" column: if the value is smaller than 1860, recode it as "Pre-modern art"; if the value between 1860 and 1945, recode it as "Modern art"; if the value is larger than 1945, recode it as "Contemporary art".
 
     ```{r}
     #Type your code here
+    paintings <- paintings |>
+      mutate(year = case_when(
+        year >= 1945 ~ "Contemporary art",
+        year >= 1860 ~ "Modern art",
+        year < 1860 ~ "Pre-modern art"
+      ))
+    head(paintings)
     ```
 
     \(3\) Move the column "woman" and the recoded "year" right before the "artist" column.
 
     ```{r}
     #Type your code here
+    paintings <- paintings |>
+      relocate(
+        woman, year, .before = artist
+      )
+    head(paintings)
     ```
 
     \(4\) Answer the question: What is the data type of the "woman" column? What is the data type of the "year" column before and after recoding?
 
+    -   Before: double
+
+    -   After: character
+
 ```{r}
 #Type your code here
+sapply(paintings, typeof)
 ```
 
 ## Part 3. The World Bank Data
