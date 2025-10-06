@@ -312,13 +312,15 @@ In such a study, what is the unit of observation?
       arrange(desc(`ControlCorruption`))
 
     # 4.2
+    # FUTURE: how can the "NAs introduced by coercion" warning be eliminated?
     worldBankTidy |>
       group_by(`Country Name`) |>
       select(`ControlCorruption`) |>
       summarise(
         avgCorruption = mean(as.numeric(`ControlCorruption`), na.rm = TRUE)
       ) |>
-      arrange(desc(`avgCorruption`))
+      arrange(desc(`avgCorruption`)) |>
+      first()
 
     worldBankTidy |>
       group_by(`Country Name`) |>
@@ -326,15 +328,18 @@ In such a study, what is the unit of observation?
       summarise(
         avgCPIA = mean(as.numeric(CPIA), na.rm = TRUE)
       ) |>
-      arrange(desc(`avgCPIA`))
+      arrange(desc(`avgCPIA`)) |>
+      first()
 
     # 4.3
+    # FUTURE: how can the "NAs introduced by coercion" warning be eliminated?
     worldBankTidy |>
       group_by(`Year`) |>
       summarise(
         avgCorruption = mean(as.numeric(`ControlCorruption`), na.rm = TRUE)
       ) |>
-      arrange(desc(avgCorruption))
+      arrange(desc(avgCorruption)) |>
+      first()
 
 
     worldBankTidy |>
@@ -342,7 +347,8 @@ In such a study, what is the unit of observation?
       summarise(
         avgCPIA = mean(as.numeric(`CPIA`), na.rm = TRUE)
       ) |>
-      arrange(desc(avgCPIA))
+      arrange(desc(avgCPIA)) |>
+      first()
     ```
 
 ## Part 4. Boston AirBnB Data
