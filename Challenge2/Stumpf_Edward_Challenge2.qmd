@@ -105,6 +105,8 @@ athleteEvents = read_csv("data/athlete_events.csv")
 
     \(6\) Answer the question: What is the data type of the "Medal" column before and after recoding?
 
+    **Answer:**
+
     -   Before: character
 
     -   After: double
@@ -162,6 +164,8 @@ paintings = read_csv("data/paintings.csv")
 
     \(4\) Answer the question: What is the data type of the "woman" column? What is the data type of the "year" column before and after recoding?
 
+    **Answer:**
+
     -   Before: double
 
     -   After: character
@@ -193,9 +197,11 @@ head(worldBank)
 
 \(1\) What is the dimension of the data (# of rows and columns)?
 
--   Row 1867 by columns 27
+**Answer:** 1867 rows by 27 columns
 
 \(2\) What do the rows and columns mean in this data?
+
+**Answer:**
 
 -   The columns represent country identifiers, a series/variable description, and a given year's data for the series/variable.
 
@@ -208,16 +214,13 @@ head(worldBank)
 
 In such a study, what is the unit of observation?
 
-3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
+**Answer:** the unit of observation is the country of Afghanistan
 
-    ```{r}
-    #Type your code here
-    # TODO
-    ```
+3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
 
     \(1\) Is the current data tidy? If not, please transform it to make it tidy.
 
-    No, currently the data is partially in a wide format with multiple columns having the value of the variable "year", as well as having a Series Name column containing multiple different variables.
+    **Answer:** No, currently the data is partially in a wide format with multiple columns having the value of the variable "year", as well as having a Series Name column containing multiple different variables.
 
     ```{r}
     #Type your code here
@@ -236,6 +239,8 @@ In such a study, what is the unit of observation?
     ```
 
     \(2\) How many countries and years are in the data?
+
+    **Answer:**
 
     -   Countries: 267
 
@@ -266,21 +271,25 @@ In such a study, what is the unit of observation?
 
     -   Which country (or countries) has the most missing values (NAs) in the Control of Corruption variable?
 
-        -   No true countries have missing Control of Corruption variables. It looks like there are missing values introduced by dataset metadata
+        **Answer:** No true countries have missing Control of Corruption variables. It looks like there are missing values introduced by dataset metadata
 
-            -   "Data from database: World Development Indicators": 24 NA values
+        -   "Data from database: World Development Indicators": 24 NA values
 
-            -   "Last Updated: 07/01/2025": 24 NA values
+        -   "Last Updated: 07/01/2025": 24 NA values
 
-            -   NA: 24 NA values
+        -   NA: 24 NA values
 
     -   Which country has the highest average value of Control of Corruption? What is that value? How about CPIA transparency, accountability, and corruption in the public sector rating?
+
+        **Answer:**
 
         -   Highest average value of Control of Corruption: Denmark with \~2.3203
 
         -   Highest average value of CPIA: St. Lucia with 4.5
 
     -   Which year has the highest average Control of Corruption across all countries? What is the value? And what about CPIA?
+
+        **Answer:**
 
         -   Highest average value of Control of Corruption: 2002 with \~-0.0124
 
