@@ -187,11 +187,19 @@ worldBank = read_csv("data/WorldBank_corruption.csv")
 
 ```{r}
 #Type your code here
+dim(worldBank)
+head(worldBank)
 ```
 
 \(1\) What is the dimension of the data (# of rows and columns)?
 
+Row 1867 by columns 27
+
 \(2\) What do the rows and columns mean in this data?
+
+The columns represent country identifiers, a series/variable description, and a given year's data for the series/variable.
+
+The rows are entries for a county, a specific series/variable, and then that series/variable's data from the years 2000 - 2023
 
 \(3\) Now, assume we want to conduct a study and use this data to investigate some questions. For example:
 
@@ -208,8 +216,22 @@ In such a study, what is the unit of observation?
 
     \(1\) Is the current data tidy? If not, please transform it to make it tidy.
 
+    No, currently the data is partially in a wide format with multiple columns having the value of the variable "year" and partially in a
+
     ```{r}
     #Type your code here
+    worldBankTidy <- worldBank |>
+      pivot_longer(
+        cols = `2023`:`2000`,
+        names_to = "Year",
+        values_to = "Value"
+      ) |>
+      pivot_wider(
+        names_from = `Series Name`,
+        values_from = Value,
+        values_fn = list
+      )
+    view(worldBankTidy)
     ```
 
     \(2\) How many countries and years are in the data?
