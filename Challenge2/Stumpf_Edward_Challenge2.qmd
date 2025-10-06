@@ -193,13 +193,13 @@ head(worldBank)
 
 \(1\) What is the dimension of the data (# of rows and columns)?
 
-Row 1867 by columns 27
+-   Row 1867 by columns 27
 
 \(2\) What do the rows and columns mean in this data?
 
-The columns represent country identifiers, a series/variable description, and a given year's data for the series/variable.
+-   The columns represent country identifiers, a series/variable description, and a given year's data for the series/variable.
 
-The rows are entries for a county, a specific series/variable, and then that series/variable's data from the years 2000 - 2023
+-   The rows are entries for a county, a specific series/variable, and then that series/variable's data from the years 2000 - 2023
 
 \(3\) Now, assume we want to conduct a study and use this data to investigate some questions. For example:
 
@@ -212,11 +212,12 @@ In such a study, what is the unit of observation?
 
     ```{r}
     #Type your code here
+    # TODO
     ```
 
     \(1\) Is the current data tidy? If not, please transform it to make it tidy.
 
-    No, currently the data is partially in a wide format with multiple columns having the value of the variable "year" and partially in a
+    No, currently the data is partially in a wide format with multiple columns having the value of the variable "year", as well as having a Series Name column containing multiple different variables.
 
     ```{r}
     #Type your code here
@@ -229,26 +230,49 @@ In such a study, what is the unit of observation?
       pivot_wider(
         names_from = `Series Name`,
         values_from = Value,
-        values_fn = list
+        values_fn = first
       )
-    view(worldBankTidy)
+    head(worldBankTidy)
     ```
 
     \(2\) How many countries and years are in the data?
 
+    -   Countries: 267
+
+    -   Years: 24
+
     ```{r}
     #Type your code here
+    worldBankTidy |>
+      select(`Country Code`, `Year`) |>
+      summarise_all(n_distinct)
     ```
 
     \(3\) Use mutate() to create a new column "log GDP", which is the log of the GDP value, excluding missing values.
 
     ```{r}
     #Type your code here
+
+    # FUTURE: ignore missing, not just paper over
+    worldBankTidy <- worldBankTidy |>
+      mutate(
+        "log GDP" = log(as.numeric(`GDP`)),
+        .after = `GDP`
+      )
+    head(worldBankTidy)
     ```
 
     \(4\) please use summarise() to estimate the following questions:
 
     -   Which country (or countries) has the most missing values (NAs) in the Control of Corruption variable?
+
+        -   No true countries have missing Control of Corruption variables. It looks like there are missing values introduced by dataset metadata
+
+            -   "Data from database: World Development Indicators": 24 NA values
+
+            -   "Last Updated: 07/01/2025": 24 NA values
+
+            -   NA: 24 NA values
 
     -   Which country has the highest average value of Control of Corruption? What is that value? How about CPIA transparency, accountability, and corruption in the public sector rating?
 
@@ -256,6 +280,18 @@ In such a study, what is the unit of observation?
 
     ```{r}
     #Type your code here
+    countNaValues <- function (column) {
+      column |>
+        is.na() |>
+        sum()
+    }
+    worldBankTidy |>
+      group_by(`Country Name`) |>
+      select(`ControlCorruption`) |>
+      summarise_all(countNaValues) |>
+      arrange(desc(`ControlCorruption`))
+
+    # IN PROGRESS
     ```
 
 ## Part 4. Boston AirBnB Data
