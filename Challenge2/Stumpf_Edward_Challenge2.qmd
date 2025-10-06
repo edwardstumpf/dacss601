@@ -276,10 +276,20 @@ In such a study, what is the unit of observation?
 
     -   Which country has the highest average value of Control of Corruption? What is that value? How about CPIA transparency, accountability, and corruption in the public sector rating?
 
+        -   Highest average value of Control of Corruption: Denmark with \~2.3203
+
+        -   Highest average value of CPIA: St. Lucia with 4.5
+
     -   Which year has the highest average Control of Corruption across all countries? What is the value? And what about CPIA?
+
+        -   Highest average value of Control of Corruption: 2002 with \~-0.0124
+
+        -   Highest average value of CPIA: 2011 with 2.9359
 
     ```{r}
     #Type your code here
+
+    # 4.1
     countNaValues <- function (column) {
       column |>
         is.na() |>
@@ -291,7 +301,38 @@ In such a study, what is the unit of observation?
       summarise_all(countNaValues) |>
       arrange(desc(`ControlCorruption`))
 
-    # IN PROGRESS
+    # 4.2
+    worldBankTidy |>
+      group_by(`Country Name`) |>
+      select(`ControlCorruption`) |>
+      summarise(
+        avgCorruption = mean(as.numeric(`ControlCorruption`), na.rm = TRUE)
+      ) |>
+      arrange(desc(`avgCorruption`))
+
+    worldBankTidy |>
+      group_by(`Country Name`) |>
+      select(`CPIA`) |>
+      summarise(
+        avgCPIA = mean(as.numeric(CPIA), na.rm = TRUE)
+      ) |>
+      arrange(desc(`avgCPIA`))
+
+    # 4.3
+    worldBankTidy |>
+      group_by(`Year`) |>
+      summarise(
+        avgCorruption = mean(as.numeric(`ControlCorruption`), na.rm = TRUE)
+      ) |>
+      arrange(desc(avgCorruption))
+
+
+    worldBankTidy |>
+      group_by(`Year`) |>
+      summarise(
+        avgCPIA = mean(as.numeric(`CPIA`), na.rm = TRUE)
+      ) |>
+      arrange(desc(avgCPIA))
     ```
 
 ## Part 4. Boston AirBnB Data
