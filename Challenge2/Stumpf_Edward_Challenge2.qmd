@@ -39,6 +39,7 @@ This challenge blends **coding** (transformations, reshaping, descriptive summar
 ```{r}
 library(tidyverse)
 library(stringr)
+library(lubridate)
 library(readr)
 library(readxl)
 library(haven) #for loading other datafiles (SAS, STATA, SPSS, etc.)
@@ -89,7 +90,7 @@ athleteEvents = read_csv("data/athlete_events.csv")
         Gold = 3,
         .missing = 0
       ))
-    view(athleteEvents)
+    head(athleteEvents)
     ```
 
     \(4\) Move the column "YearOfBirth", "Senior", and "Medal" right after the "Name" column.
@@ -360,11 +361,17 @@ boston <- boston |>
 
     ```{r}
     #Type your code here
+    dim(boston)
+    head(boston)
     ```
 
     \(1\) What is the dimension of the data (# of rows and columns)?
 
+    **Answer:** 4560 rows by 20 columns
+
     \(2\) What do the rows and columns mean in this data?
+
+    **Answer:** each row is an AirBnB listing with the listing's name, host, neighborhood, longitude, latitude, room type, price, minimum stay duration, reviews, license, etc.
 
     \(3\) Now, assume we want to conduct a study and use this data to investigate the some questions. For example:
 
@@ -373,10 +380,21 @@ boston <- boston |>
 
     In such a study, what is the unit of observation?
 
+    **Answer:** an AirBnb listing
+
 3.  **Use the three separate columns `year`, `month`, and `day` and transform them back to the original "`last_review`" column.**
 
     ```{r}
-    #Type your code here
+    boston <- boston |>
+      mutate(
+        `last_review` = make_date(
+          year = year,
+          month = month,
+          day = day
+        ),
+        .before = year
+      )
+    head(boston)
     ```
 
 4.  **Conduct following statistics.**
@@ -385,8 +403,41 @@ boston <- boston |>
 
     ```{r}
     #Type your code here
+
+    # 4.1
+    # FUTURE: refactor
+    boston |>
+      group_by(`last_review`) |>
+      mutate(
+        `last_review_count` = 1
+      ) |>
+      summarise(
+        total = sum(`last_review_count`)
+      ) |>
+      arrange(desc(`total`))
+
+    # 4.2
+    # Scientific notation fix from https://stackoverflow.com/a/25947542
+    options(scipen=999)
+    boston |>
+      select(id, price) |>
+      arrange(desc(price)) |>
+      first()
+
+    boston |>
+      select(id, price) |>
+      arrange(price) |>
+      first()
     ```
 
     \(1\) What's the most common value in the `last_review` column?
 
+    **Answer:** NA with 1066 entries, followed by 2025-06-15 with 148 entries
+
     \(2\) Which listing has the highest price? And which has the lowest? Provide the id for both listings.
+
+    **Answer:**
+
+    -   Highest: ID 1145753293926550912 at \$50,096
+
+    -   Lowest: ID 4755586 at \$27
