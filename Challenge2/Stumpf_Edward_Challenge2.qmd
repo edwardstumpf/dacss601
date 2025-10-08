@@ -1,0 +1,449 @@
+---
+title: "Challenge_2: Data Transformation and "
+author: "Edward Stumpf"
+description: "Fall 2025"
+date: "10/5/2025"
+format: 
+  html: 
+    embed-resources: true
+    self-contained-math: true
+editor: visual
+---
+
+**Make sure you change the author's name and date in the YAMAL header (the chunk above)**
+
+#Challenge Overview In this second challenge, you will expand your data wrangling skills by working with multiple datasets across different domains.The goal is to practice creating and transforming variables, reshaping datasets, and handling different data types. You will:
+
+-   Use `mutate()` and related functions to create new variables and recode existing ones.
+
+-   Explore categorical vs. numeric variables and track how data types change through transformation.
+
+-   Reshape international development data into tidy format and compute summary statistics across countries and years.
+
+-   Work with real-world Airbnb data to describe dataset structure, identify key features, and handle date variables.
+
+This challenge blends **coding** (transformations, reshaping, descriptive summaries) with **writing** (interpreting dataset structure, describing transformations, reporting results). By completing it, you will gain confidence in moving beyond simple dataset description to more complex wrangling tasks that prepare your data for meaningful analysis.
+
+**Special note: it is important to cultivate a habbit that everytime when you transform a data (for example, recode and rename a column, replacing or reshaping the existing data, or create a new data), do a sanity check (for example, `head()`) to see if the transformed data is what you want.**
+
+## Datasets
+
+\- athlete_events.csv (Part 1) ⭐
+
+\- paintings.csv (Part 1) ⭐
+
+\- WorldBank_corruption.csv (Part 3)⭐
+
+\- FedFundsRate.csv (Part 4)⭐
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(lubridate)
+library(readr)
+library(readxl)
+library(haven) #for loading other datafiles (SAS, STATA, SPSS, etc.)
+```
+
+## **Part 1. the athlete_events Data:**
+
+1.  **Read the dataset**
+
+```{r}
+athleteEvents = read_csv("data/athlete_events.csv")
+```
+
+2.  **Conduct the following transformation for the data by using mutate() and other related functions :**
+
+    \(1\) Create a new column named "YearOfBirth" using the information in the "Age" and "Year" column.
+
+    ```{r}
+    #Type your code here
+    athleteEvents <- athleteEvents |>
+      mutate(YearOfBirth = Year - Age, .after=Age)
+    head(athleteEvents)
+    ```
+
+    \(2\) Create a new column named "Senior" using the information in the "Age" column. If the athlete is 40 years or older, label them as "senior"; if the athlete is younger than 40, label them as "junior".
+
+    ```{r}
+    #Type your code 
+    athleteEvents <- athleteEvents |>
+      mutate(Senior = case_when(
+        Age >= 40 ~ "senior",
+        Age < 40 ~ "junior",
+        .default = NA
+      ),
+      .before = YearOfBirth)
+    head(athleteEvents)
+    ```
+
+    \(3\) Recode the "Medal" column into a new numeric variable: if the athlete did not win a medal (NA), recode it as 0; recode it as 1 for a bronze medal, 2 for a silver medal, and 3 for a gold medal.
+
+    ```{r}
+    #Type your code here
+    athleteEvents <- athleteEvents |>
+      mutate(Medal = recode(
+        Medal,
+        Bronze = 1,
+        Silver = 2,
+        Gold = 3,
+        .missing = 0
+      ))
+    head(athleteEvents)
+    ```
+
+    \(4\) Move the column "YearOfBirth", "Senior", and "Medal" right after the "Name" column.
+
+    ```{r}
+    #Type your code here
+    athleteEvents <- athleteEvents |>
+      relocate(
+        YearOfBirth, Senior, Medal, .after = Name
+      )
+    head(athleteEvents)
+    ```
+
+    \(6\) Answer the question: What is the data type of the "Medal" column before and after recoding?
+
+    **Answer:**
+
+    -   Before: character
+
+    -   After: double
+
+```{r}
+#Type your code here
+sapply(athleteEvents, typeof)
+```
+
+## **Part 2. the Paintings Data:**
+
+1.  **Read the dataset.**
+
+```{r}
+paintings = read_csv("data/paintings.csv")
+```
+
+2.  **Conduct the following transformation for the data by using `mutate()` and other related functions :**
+
+    \(1\) Create a new column named "woman" using the information in the "depicts" column. If a painting includes the word 'woman' in its description, it should be coded as 1, otherwise as 0. Hint: use `grepl("woman", depicts)` inside `mutate()`
+
+    ```{r}
+    #Type your code here
+    paintings <- paintings |>
+      mutate(woman = case_when(
+        grepl("woman", depicts) ~ 1,
+        .default = 0
+      ), .after = depicts)
+    head(paintings)
+    ```
+
+    \(2\) Recode the "year" column: if the value is smaller than 1860, recode it as "Pre-modern art"; if the value between 1860 and 1945, recode it as "Modern art"; if the value is larger than 1945, recode it as "Contemporary art".
+
+    ```{r}
+    #Type your code here
+    paintings <- paintings |>
+      mutate(year = case_when(
+        year >= 1945 ~ "Contemporary art",
+        year >= 1860 ~ "Modern art",
+        year < 1860 ~ "Pre-modern art"
+      ))
+    head(paintings)
+    ```
+
+    \(3\) Move the column "woman" and the recoded "year" right before the "artist" column.
+
+    ```{r}
+    #Type your code here
+    paintings <- paintings |>
+      relocate(
+        woman, year, .before = artist
+      )
+    head(paintings)
+    ```
+
+    \(4\) Answer the question: What is the data type of the "woman" column? What is the data type of the "year" column before and after recoding?
+
+    **Answer:**
+
+    -   Before: double
+
+    -   After: character
+
+```{r}
+#Type your code here
+sapply(paintings, typeof)
+```
+
+## Part 3. The World Bank Data
+
+The data is downloaded from the World Bank, World Development Indicators. Variables includes: GDP (current US\$), Foreign direct investment, net inflows (% of GDP), GDP growth (annual %), Oil rents (% of GDP), Tax revenue (% of GDP), Control of Corruption: Estimate, and CPIA transparency, accountability, and corruption in the public sector rating (1=low to 6=high). Please check the [website](https://databank.worldbank.org/source/world-development-indicators#) for more information.
+
+**Special note:**
+
+1.  **Read the dataset "WorldBank_corruption.csv":**
+
+```{r}
+worldBank = read_csv("data/WorldBank_corruption.csv")
+```
+
+2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
+
+```{r}
+#Type your code here
+dim(worldBank)
+head(worldBank)
+```
+
+\(1\) What is the dimension of the data (# of rows and columns)?
+
+**Answer:** 1867 rows by 27 columns
+
+\(2\) What do the rows and columns mean in this data?
+
+**Answer:**
+
+-   The columns represent country identifiers, a series/variable description, and a given year's data for the series/variable.
+
+-   The rows are entries for a county, a specific series/variable, and then that series/variable's data from the years 2000 - 2023
+
+\(3\) Now, assume we want to conduct a study and use this data to investigate some questions. For example:
+
+*"How has GDP growth in Afghanistan changed between 2000 and 2020?"*, and\
+*"Is there an association between oil rents(% of GDP) and control of corruption across countries and years?"*
+
+In such a study, what is the unit of observation?
+
+**Answer:** the unit of observation is the country of Afghanistan
+
+3.  **Data Transformation: use necessary commands and codes and answer the following questions.**
+
+    \(1\) Is the current data tidy? If not, please transform it to make it tidy.
+
+    **Answer:** No, currently the data is partially in a wide format with multiple columns having the value of the variable "year", as well as having a Series Name column containing multiple different variables.
+
+    ```{r}
+    #Type your code here
+    worldBankTidy <- worldBank |>
+      pivot_longer(
+        cols = `2023`:`2000`,
+        names_to = "Year",
+        values_to = "Value"
+      ) |>
+      pivot_wider(
+        names_from = `Series Name`,
+        values_from = Value,
+        values_fn = first
+      )
+    head(worldBankTidy)
+    ```
+
+    \(2\) How many countries and years are in the data?
+
+    **Answer:**
+
+    -   Countries: 267
+
+    -   Years: 24
+
+    ```{r}
+    #Type your code here
+    worldBankTidy |>
+      select(`Country Code`, `Year`) |>
+      summarise_all(n_distinct)
+    ```
+
+    \(3\) Use mutate() to create a new column "log GDP", which is the log of the GDP value, excluding missing values.
+
+    ```{r}
+    #Type your code here
+
+    # FUTURE: ignore missing, not just paper over
+    worldBankTidy <- worldBankTidy |>
+      mutate(
+        "log GDP" = log(as.numeric(`GDP`)),
+        .after = `GDP`
+      )
+    head(worldBankTidy)
+    ```
+
+    \(4\) please use summarise() to estimate the following questions:
+
+    -   Which country (or countries) has the most missing values (NAs) in the Control of Corruption variable?
+
+        **Answer:** No true countries have missing Control of Corruption variables. It looks like there are missing values introduced by dataset metadata
+
+        -   "Data from database: World Development Indicators": 24 NA values
+
+        -   "Last Updated: 07/01/2025": 24 NA values
+
+        -   NA: 24 NA values
+
+    -   Which country has the highest average value of Control of Corruption? What is that value? How about CPIA transparency, accountability, and corruption in the public sector rating?
+
+        **Answer:**
+
+        -   Highest average value of Control of Corruption: Denmark with \~2.3203
+
+        -   Highest average value of CPIA: St. Lucia with 4.5
+
+    -   Which year has the highest average Control of Corruption across all countries? What is the value? And what about CPIA?
+
+        **Answer:**
+
+        -   Highest average value of Control of Corruption: 2002 with \~-0.0124
+
+        -   Highest average value of CPIA: 2011 with 2.9359
+
+    ```{r}
+    #Type your code here
+
+    # 4.1
+    countNaValues <- function (column) {
+      column |>
+        is.na() |>
+        sum()
+    }
+    worldBankTidy |>
+      group_by(`Country Name`) |>
+      select(`ControlCorruption`) |>
+      summarise_all(countNaValues) |>
+      arrange(desc(`ControlCorruption`))
+
+    # 4.2
+    # FUTURE: how can the "NAs introduced by coercion" warning be eliminated?
+    worldBankTidy |>
+      group_by(`Country Name`) |>
+      select(`ControlCorruption`) |>
+      summarise(
+        avgCorruption = mean(as.numeric(`ControlCorruption`), na.rm = TRUE)
+      ) |>
+      arrange(desc(`avgCorruption`)) |>
+      first()
+
+    worldBankTidy |>
+      group_by(`Country Name`) |>
+      select(`CPIA`) |>
+      summarise(
+        avgCPIA = mean(as.numeric(CPIA), na.rm = TRUE)
+      ) |>
+      arrange(desc(`avgCPIA`)) |>
+      first()
+
+    # 4.3
+    # FUTURE: how can the "NAs introduced by coercion" warning be eliminated?
+    worldBankTidy |>
+      group_by(`Year`) |>
+      summarise(
+        avgCorruption = mean(as.numeric(`ControlCorruption`), na.rm = TRUE)
+      ) |>
+      arrange(desc(avgCorruption)) |>
+      first()
+
+
+    worldBankTidy |>
+      group_by(`Year`) |>
+      summarise(
+        avgCPIA = mean(as.numeric(`CPIA`), na.rm = TRUE)
+      ) |>
+      arrange(desc(avgCPIA)) |>
+      first()
+    ```
+
+## Part 4. Boston AirBnB Data
+
+Downloaded from (https://insideairbnb.com/get-the-data/).
+
+1.  **Read the dataset "listings_Boston.csv" using the following codes (remove \# to read the data file):**
+
+```{r}
+boston <- read_csv("data/listings_Boston.csv")
+boston <- boston |>
+  separate(last_review, into = c("year", "month", "day"), sep = "-")
+```
+
+2.  **Data Description: Please use the necessary commands and codes and briefly describe this data with a short writing paragraph answering the following questions.**
+
+    ```{r}
+    #Type your code here
+    dim(boston)
+    head(boston)
+    ```
+
+    \(1\) What is the dimension of the data (# of rows and columns)?
+
+    **Answer:** 4560 rows by 20 columns
+
+    \(2\) What do the rows and columns mean in this data?
+
+    **Answer:** each row is an AirBnB listing with the listing's name, host, neighborhood, longitude, latitude, room type, price, minimum stay duration, reviews, license, etc.
+
+    \(3\) Now, assume we want to conduct a study and use this data to investigate the some questions. For example:
+
+    *"Which listing has the highest price? Which has the lowest?"*, and\
+    *"Do listings with more reviews tend to have lower prices (i.e., more accessible to typical guests)?"*
+
+    In such a study, what is the unit of observation?
+
+    **Answer:** an AirBnb listing
+
+3.  **Use the three separate columns `year`, `month`, and `day` and transform them back to the original "`last_review`" column.**
+
+    ```{r}
+    boston <- boston |>
+      mutate(
+        `last_review` = make_date(
+          year = year,
+          month = month,
+          day = day
+        ),
+        .before = year
+      )
+    head(boston)
+    ```
+
+4.  **Conduct following statistics.**
+
+    Special note: in this question, feel free to explore alternative functions (such as those in `baseR`) to the `tidyverse/dplyr` functions.
+
+    ```{r}
+    #Type your code here
+
+    # 4.1
+    # FUTURE: refactor
+    boston |>
+      group_by(`last_review`) |>
+      mutate(
+        `last_review_count` = 1
+      ) |>
+      summarise(
+        total = sum(`last_review_count`)
+      ) |>
+      arrange(desc(`total`))
+
+    # 4.2
+    # Scientific notation fix from https://stackoverflow.com/a/25947542
+    options(scipen=999)
+    boston |>
+      select(id, price) |>
+      arrange(desc(price)) |>
+      first()
+
+    boston |>
+      select(id, price) |>
+      arrange(price) |>
+      first()
+    ```
+
+    \(1\) What's the most common value in the `last_review` column?
+
+    **Answer:** NA with 1066 entries, followed by 2025-06-15 with 148 entries
+
+    \(2\) Which listing has the highest price? And which has the lowest? Provide the id for both listings.
+
+    **Answer:**
+
+    -   Highest: ID 1145753293926550912 at \$50,096
+
+    -   Lowest: ID 4755586 at \$27
