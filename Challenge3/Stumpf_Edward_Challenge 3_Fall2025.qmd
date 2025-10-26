@@ -1,0 +1,181 @@
+---
+title: "Challenge_3: Joining Relational Data, Writing Your Own Functions, and String Operations"
+author: "Edward Stumpf"
+description: ""
+date: "10/26/2025"
+format: 
+  html: 
+    embed-resources: true
+    self-contained-math: true
+---
+
+**Make sure you change the author's name in the above YAML header.** **Name the html file as Lastname_Firstname_Challenge3.html**
+
+## Setup
+
+If you have not installed the following packages, please install them before loading them.
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+
+library(readr)
+library(dplyr)
+library(purrr)
+```
+
+## Challenge Overview
+
+In this challenge, we will practice `join()` with relational data, use string functions to process, extract information, and mutate and clean data. We will also practice wring own functions.
+
+There will be coding components and writing components. Please read the instructions for each part and complete your challenges.
+
+## Datasets
+
+There are three datasets provided in this challenge. Please download the following dataset files from Google Classroom and save them to a folder within your project working directory (for example, one called "data"). If you don't have a folder to store the datasets, please create one.
+
+-   Part 1 and 2: WVS_2020.csv and WorldBank_corruption ⭐⭐
+-   Part 3: Animal-names.csv ⭐
+
+Find the `data` folder, then use the correct R command to read the datasets.
+
+## Part 1. Joining Individual-level and Country-Level Data
+
+Suppose we have a research project that studies individuals' corruption perception, and we are interested in **how a country's tax revenue influences individuals' corruption perception**. In this case, we will need to combine the two data for future analysis.
+
+1.  **Read the two raw datasets:** `WVS_2020.csv` and`Worldbank_wide.csv`(the wide-version of the World Bank dataset created in Challenge#2)**.**
+
+    Note#1: the world bank wide data here is a clean version. You can directly load it and use it.
+
+    Note#2: Please read the WVS codebook and recode "Don't know", "No answer", "Not asked", and "Missing; Not available" as NA.
+
+```{r}
+#read the two datasets and preview them.
+wvs2020 = read_csv("data/WVS_2020.csv")
+worldBank = read_csv("data/Worldbank_wide.csv")
+
+```
+
+```{r}
+#recode the WVS dataset based on the codebook. 
+
+
+```
+
+2.  **Answer the following questions:**
+
+    \(1\) In this project, what is our unit of analysis?
+
+    \(2\) Which is the primary data, and what is its unit of observation? Which is the foreign data, and what is its unit of observation?
+
+    \(3\) What is(are) the key(s) for the two data?
+
+    \(4\) How many unique countries are there in the WVS_2020 data? How many unique countries are there in the WorldBank_corruption data?
+
+```{r}
+
+```
+
+3.  **Suppose we have a theory that a country's tax revenue affects an individual's perception of corruption . We must merge the two data.**
+
+    \(1\) What column(s) will we use as a matching key(s) for combining the updated WVS dataset and World Bank dataset? Note: you can use multiple matching strategies, but I suggest we create a common matching key for both data if there are none.
+
+```{r}
+
+
+```
+
+\(2\) Join the two data (WVS and World Bank). Please print the first few entries as a sanity check. Name the joined data as "WVS_WB"
+
+```{r}
+```
+
+\(3\) Save the joined data *WVS_WB* to your local directory using the following code. We will be using this joined data to explore visualization in future challenges. (This is for future usage. No need to submit the saved joined data.)
+
+```{r}
+#write_csv(WVS_WB, "WVS_WB.csv")
+```
+
+4.  **Describe the data structure of the newly joined data *WVS_WB*. What is its dimension (# of rows and \# of columns)? What is its unit of observation? How many unique countries are there in the WVS_WB data? Compared to the original WVS data, does the above data combination change the dimension and unit of observation?**
+
+```{r}
+
+```
+
+## Part 2. Writing Your Own Functions
+
+Please use the joined data ***WVS_WB*** in Part 1 and complete the following tasks.
+
+\(1\) Write **one function** to check these columns (except the columns of *Year*, *Country Name*, *Country Code*, and *Interviewer ID*)\
+to see if they are numeric or not, and convert them to numeric if they are not.
+
+Note: Some columns are character data in R, even though they are recorded as numbers. Why? Because there are pseudo-missing strings such as `"NA"` or `"/NA"` in the column, and R treats the whole column as character. Pseudo-missing strings are text versions of missing values that *look* like “NA” to humans but are not real missing values (`NA`) in R.
+
+Hint: use an `if` condition inside your function.
+
+```{r}
+
+```
+
+\(2\) Write **ONE** function to conduct summary statistics of the range, average, standard deviation, number of NAs, and the number of unique values of any given numeric columns:
+
+```{r}
+
+
+```
+
+\(3\) Test your summary statistics function with Control Corruption, CPIA, Q112, Q113, and Q115. (check this)
+
+```{r}
+
+```
+
+## Part 3. Practicing Stringr Package and Iteration with Animal-names.csv
+
+1.  **Import the Animal-names data:**
+
+```{r}
+animalNames = read_csv("data/Animal-names.csv")
+```
+
+2.  **Use different string functions from stringr package to answer the following questions:**
+
+    \(1\) Find and list the longest animal name (or names, if there are multiple names that are equally longest). Hint: you can make use of base R's `nchar` function.
+
+```{r}
+
+```
+
+\(2\) Use a string function to detect if the following names are present in the data: "Whale", "Jaguar", "Panda", "Capybara", and "Shark". Please write a **for loop** to iterate over the vector of names, and print out whether each animal is found in the column name.
+
+Hint: In regular expressions, the **anchoring symbols**
+
+-    `^` (caret) marks the **beginning** of a string
+
+-    `$` (dollar sign) marks the **end** of a string
+
+Together, `"^Whale$"` means “the entire string is exactly `Whale`,” not “contains Whale somewhere inside.” You can build such a pattern dynamically using: `paste0("^", string, "$")` .
+
+```{r}
+
+```
+
+\(3\) Similar to question(2), use a string function to detect if the following names are present in the data: "Whale", "Jaguar", "Panda", "Capybara", and "Shark". This time, **write a function and use `purrr::map`**.
+
+```{r}
+# Use the Anchoring (a way of regular expression), "^animal$", to specify the word that you search for. By using Anchoring ("^"and"$"), you can search the exact animal by specifying the beginning and the ending letters.
+
+```
+
+\(3\) Create a column *IDName,* by combing the strings of columns *id* and *name*, separating by a period. For example, a value in this new column should be like "1.Aardvark".
+
+```{r}
+
+```
+
+\(4\) Find all "Bear" entries in the data and replace "Bear" with "Cub". Only display the rows where the name has changed. Note: Be careful not to replace words that merely contain "Bear" as part of a longer word — such as "Bearded Dragon" — which should remain unchanged.
+
+```{r}
+
+```
