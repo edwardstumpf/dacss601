@@ -186,20 +186,74 @@ Note: Some columns are character data in R, even though they are recorded as num
 Hint: use an `if` condition inside your function.
 
 ```{r}
+# FUTURE: is there a way to loop over and mutate all columns within a dataset?
+convertToNumeric <- function (column) {
+  if (is.numeric(column)) {
+    column
+  }
+  # Causes warning "NAs introduced by coercion"
+  as.numeric(column)
+}
 
+WVS_WB_Updated <- WVS_WB |>
+  mutate(
+    `Q112` = convertToNumeric(`Q112`),
+    `Q113` = convertToNumeric(`Q113`),
+    `Q114` = convertToNumeric(`Q114`),
+    `Q115` = convertToNumeric(`Q115`),
+    `Q116` = convertToNumeric(`Q116`),
+    `Q117` = convertToNumeric(`Q117`),
+    `GDP` = convertToNumeric(`GDP`),
+    `FDI` = convertToNumeric(`FDI`),
+    `GDPgr` = convertToNumeric(`GDPgr`),
+    `Oilrents` = convertToNumeric(`Oilrents`),
+    `Taxrevenue` = convertToNumeric(`Taxrevenue`),
+    `ControlCorruption` = convertToNumeric(`ControlCorruption`),
+    `CPIA` = convertToNumeric(`CPIA`),
+    `log GDP` = convertToNumeric(`log GDP`)
+  )
+
+head(WVS_WB_Updated, 10)
+tail(WVS_WB_Updated, 10)
 ```
 
 \(2\) Write **ONE** function to conduct summary statistics of the range, average, standard deviation, number of NAs, and the number of unique values of any given numeric columns:
 
 ```{r}
+library(stringr)
 
+summaryStatistics <- function (column) {
+  # Do not generate statistics for non-numeric values
+  if (! is.numeric(column)) {
+    return(NA)
+  }
+
+  statistics <- tibble(
+    range = str_c(
+      range(column, na.rm = TRUE),
+      collapse = " - " # from str_c R Documentation
+    ),
+    average = mean(column, na.rm = TRUE),
+    sd = sd(column, na.rm = TRUE),
+    countNAs = column |>
+      is.na() |>
+      sum(),
+    countUnique = NA # TODO
+  )
+  
+  return(statistics)
+}
 
 ```
 
 \(3\) Test your summary statistics function with Control Corruption, CPIA, Q112, Q113, and Q115. (check this)
 
 ```{r}
-
+summaryStatistics(WVS_WB_Updated$`ControlCorruption`)
+summaryStatistics(WVS_WB_Updated$`CPIA`)
+summaryStatistics(WVS_WB_Updated$`Q112`)
+summaryStatistics(WVS_WB_Updated$`Q113`)
+summaryStatistics(WVS_WB_Updated$`Q115`)
 ```
 
 ## Part 3. Practicing Stringr Package and Iteration with Animal-names.csv
