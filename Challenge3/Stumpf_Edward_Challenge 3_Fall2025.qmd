@@ -52,15 +52,40 @@ Suppose we have a research project that studies individuals' corruption percepti
 
 ```{r}
 #read the two datasets and preview them.
-wvs2020 = read_csv("data/WVS_2020.csv")
-worldBank = read_csv("data/Worldbank_wide.csv")
+wvs2020Initial <- read_csv("data/WVS_2020.csv")
+worldBank <- read_csv("data/Worldbank_wide.csv")
 
+head(wvs2020Initial, 10)
+tail(wvs2020Initial, 10)
+head(worldBank, 10)
+tail(worldBank, 10)
 ```
 
 ```{r}
 #recode the WVS dataset based on the codebook. 
 
+recodeWvsResponse <- function (column) {
+  case_when(
+    column == -1 ~ NA,
+    column == -2 ~ NA,
+    column == -4 ~ NA,
+    column == -5 ~ NA,
+    TRUE ~ column
+  )
+}
 
+wvs2020 <- wvs2020Initial |>
+  mutate(
+    Q112 = recodeWvsResponse(Q112),
+    Q113 = recodeWvsResponse(Q113),
+    Q114 = recodeWvsResponse(Q114),
+    Q115 = recodeWvsResponse(Q115),
+    Q116 = recodeWvsResponse(Q116),
+    Q117 = recodeWvsResponse(Q117),
+  )
+
+head(wvs2020, 10)
+tail(wvs2020, 10)
 ```
 
 2.  **Answer the following questions:**
