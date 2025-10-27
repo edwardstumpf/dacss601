@@ -91,12 +91,19 @@ tail(wvs2020, 10)
 2.  **Answer the following questions:**
 
     \(1\) In this project, what is our unit of analysis?
+    
+    - TODO
 
     \(2\) Which is the primary data, and what is its unit of observation? Which is the foreign data, and what is its unit of observation?
+    
+    - TODO
 
     \(3\) What is(are) the key(s) for the two data?
+    
+    - TODO
 
     \(4\) How many unique countries are there in the WVS_2020 data? How many unique countries are there in the WorldBank_corruption data?
+
     - There are 14 unique countries in the WVS 2020 data set
     - There are 212 unique countries in the World Bank dataset
 
@@ -113,9 +120,10 @@ worldBank |>
 3.  **Suppose we have a theory that a country's tax revenue affects an individual's perception of corruption . We must merge the two data.**
 
     \(1\) What column(s) will we use as a matching key(s) for combining the updated WVS dataset and World Bank dataset? Note: you can use multiple matching strategies, but I suggest we create a common matching key for both data if there are none.
+
     - We will need to create a new key for matching countries
-    - This is because the WVS 2020 data set has a Correlates of War character code column (C_COW_ALPHA) but the World Bank data set's Country Code column is a different type of code
-    - This is because the WVS 2020's C_COW_ALPHA column is a Correlates of War character code, but the World Bank's Country Code column is ISO-3 character code
+        - This is because the WVS 2020's C_COW_ALPHA column is a Correlates of War character code, but the World Bank's Country Code column is ISO-3 character code
+        - Though these codes look similar at a first glance, they are different and will only result in 6 countries matching out of a possible 14 countries
     - We can use the "countrycode" package to create a new column for the WVS 2020 dataset that lists the country's ISO-3 character code based on its Correlates of War charater code
         - Though we could add a Correlates of War character code column to the World Bank dataset, it appears that not all countries in this dataset have Correlates of War character codes based on the "countrycode" package warnings
     - Once this is done, we can use the WVS 2020 data set's A_YEAR and C_COW_ALPHA columns and the updated World Bank data set's Year and new C_COW_ALPHA columns as our join keys
@@ -137,30 +145,33 @@ head(wvs2020Iso3, 10)
 ```
 
 \(2\) Join the two data (WVS and World Bank). Please print the first few entries as a sanity check. Name the joined data as "WVS_WB"
-- Includes an additional sanity check: verifies that there are 14 distinct countries in the joined data set (ie. the number of distinct countries in the WVS 2020 data set)
-- This confirms that our generated country code column works as intended
 
 ```{r}
 WVS_WB <- wvs2020Iso3 |>
   inner_join(worldBank, by = c("C_ISO3_C" = "Country Code", "A_YEAR" = "Year"))
 
 head(WVS_WB, 10)
-
-WVS_WB |>
-  select(`C_ISO3_C`) |>
-  summarise_all(n_distinct)
 ```
 
 \(3\) Save the joined data *WVS_WB* to your local directory using the following code. We will be using this joined data to explore visualization in future challenges. (This is for future usage. No need to submit the saved joined data.)
 
 ```{r}
-#write_csv(WVS_WB, "WVS_WB.csv")
+write_csv(WVS_WB, "WVS_WB.csv")
 ```
 
 4.  **Describe the data structure of the newly joined data *WVS_WB*. What is its dimension (# of rows and \# of columns)? What is its unit of observation? How many unique countries are there in the WVS_WB data? Compared to the original WVS data, does the above data combination change the dimension and unit of observation?**
 
-```{r}
+- Dimensions: There are 21,187 rows and 20 columns of data
+- Unit of Observation: TODO
+- Unique Countries: There are 14 unique countries in the dataset.  This makes sense, since there were only 14 countries in the original WVS 2020 dataset and we performed an inner join to generate this dataset, which will only keeps observations that exist in both datasets
+- Changes: TODO
 
+```{r}
+dim(WVS_WB)
+
+WVS_WB |>
+  select(`Country Name`) |>
+  summarise_all(n_distinct)
 ```
 
 ## Part 2. Writing Your Own Functions
