@@ -115,24 +115,25 @@ worldBank |>
     \(1\) What column(s) will we use as a matching key(s) for combining the updated WVS dataset and World Bank dataset? Note: you can use multiple matching strategies, but I suggest we create a common matching key for both data if there are none.
     - We will need to create a new key for matching countries
     - This is because the WVS 2020 data set has a Correlates of War character code column (C_COW_ALPHA) but the World Bank data set's Country Code column is a different type of code
-    - We can use the "countrycode" package to create a new column for the World Bank dataset that has the country's Correlates of War character code
+    - This is because the WVS 2020's C_COW_ALPHA column is a Correlates of War character code, but the World Bank's Country Code column is ISO-3 character code
+    - We can use the "countrycode" package to create a new column for the WVS 2020 dataset that lists the country's ISO-3 character code based on its Correlates of War charater code
+        - Though we could add a Correlates of War character code column to the World Bank dataset, it appears that not all countries in this dataset have Correlates of War character codes based on the "countrycode" package warnings
     - Once this is done, we can use the WVS 2020 data set's A_YEAR and C_COW_ALPHA columns and the updated World Bank data set's Year and new C_COW_ALPHA columns as our join keys
 
 ```{r}
 # Adapted from Challenge 2 solution set and "countrycode" package R Documentation
-# origin: country.name - country name
-#   Future: what format is the Country Code column? Country Name has "Some values were not matched unambiguously", though this may be because they don't have Country of War codes
-# destination: cowc - Correlates of War character
+# origin: cowc - Correlates of War character
+# destination: iso3c - ISO-3 character
 
 library(countrycode)
 
-worldBankCowc <- worldBank |>
+wvs2020Iso3 <- wvs2020 |>
   mutate(
-    C_COW_ALPHA = countrycode(`Country Name`, "country.name", "cowc"),
-    .after = `Country Code`
+    C_ISO3_C = countrycode(`C_COW_ALPHA`, "cowc", "iso3c"),
+    .after = `C_COW_ALPHA`
   )
 
-head(worldBankCowc, 10)
+head(wvs2020Iso3, 10)
 ```
 
 \(2\) Join the two data (WVS and World Bank). Please print the first few entries as a sanity check. Name the joined data as "WVS_WB"
@@ -140,13 +141,13 @@ head(worldBankCowc, 10)
 - This confirms that our generated country code column works as intended
 
 ```{r}
-WVS_WB <- wvs2020 |>
-  inner_join(worldBankCowc, by = c("C_COW_ALPHA" = "C_COW_ALPHA", "A_YEAR" = "Year"))
+WVS_WB <- wvs2020Iso3 |>
+  inner_join(worldBank, by = c("C_ISO3_C" = "Country Code", "A_YEAR" = "Year"))
 
 head(WVS_WB, 10)
 
 WVS_WB |>
-  select(`C_COW_ALPHA`) |>
+  select(`C_ISO3_C`) |>
   summarise_all(n_distinct)
 ```
 
