@@ -97,23 +97,57 @@ tail(wvs2020, 10)
     \(3\) What is(are) the key(s) for the two data?
 
     \(4\) How many unique countries are there in the WVS_2020 data? How many unique countries are there in the WorldBank_corruption data?
+    - There are 14 unique countries in the WVS 2020 data set
+    - There are 212 unique countries in the World Bank dataset
 
 ```{r}
+wvs2020 |>
+  select(C_COW_ALPHA) |>
+  summarise_all(n_distinct)
 
+worldBank |>
+  select(`Country Code`) |>
+  summarise_all(n_distinct)
 ```
 
 3.  **Suppose we have a theory that a country's tax revenue affects an individual's perception of corruption . We must merge the two data.**
 
     \(1\) What column(s) will we use as a matching key(s) for combining the updated WVS dataset and World Bank dataset? Note: you can use multiple matching strategies, but I suggest we create a common matching key for both data if there are none.
+    - We will need to create a new key for matching countries
+    - This is because the WVS 2020 data set has a Correlates of War character code column (C_COW_ALPHA) but the World Bank data set's Country Code column is a different type of code
+    - We can use the "countrycode" package to create a new column for the World Bank dataset that has the country's Correlates of War character code
+    - Once this is done, we can use the WVS 2020 data set's A_YEAR and C_COW_ALPHA columns and the updated World Bank data set's Year and new C_COW_ALPHA columns as our join keys
 
 ```{r}
+# Adapted from Challenge 2 solution set and "countrycode" package R Documentation
+# origin: country.name - country name
+#   Future: what format is the Country Code column? Country Name has "Some values were not matched unambiguously", though this may be because they don't have Country of War codes
+# destination: cowc - Correlates of War character
 
+library(countrycode)
 
+worldBankCowc <- worldBank |>
+  mutate(
+    C_COW_ALPHA = countrycode(`Country Name`, "country.name", "cowc"),
+    .after = `Country Code`
+  )
+
+head(worldBankCowc, 10)
 ```
 
 \(2\) Join the two data (WVS and World Bank). Please print the first few entries as a sanity check. Name the joined data as "WVS_WB"
+- Includes an additional sanity check: verifies that there are 14 distinct countries in the joined data set (ie. the number of distinct countries in the WVS 2020 data set)
+- This confirms that our generated country code column works as intended
 
 ```{r}
+WVS_WB <- wvs2020 |>
+  inner_join(worldBankCowc, by = c("C_COW_ALPHA" = "C_COW_ALPHA", "A_YEAR" = "Year"))
+
+head(WVS_WB, 10)
+
+WVS_WB |>
+  select(`C_COW_ALPHA`) |>
+  summarise_all(n_distinct)
 ```
 
 \(3\) Save the joined data *WVS_WB* to your local directory using the following code. We will be using this joined data to explore visualization in future challenges. (This is for future usage. No need to submit the saved joined data.)
