@@ -266,7 +266,7 @@ animalNames = read_csv("data/Animal-names.csv")
 ```{r}
 longestName <- c()
 longestLength <- 0
-for (name in uniqueNames[[1]]) {
+for (name in animalNames[[2]]) {
   if (str_length(name) == longestLength) {
     longestName <- append(longestName, name)
   } else if (str_length(name) > longestLength) {
