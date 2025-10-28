@@ -122,7 +122,7 @@ worldBank |>
     \(1\) What column(s) will we use as a matching key(s) for combining the updated WVS dataset and World Bank dataset? Note: you can use multiple matching strategies, but I suggest we create a common matching key for both data if there are none.
 
     - We will need to create a new key for matching countries
-        - This is because the WVS 2020's C_COW_ALPHA column is a Correlates of War character code, but the World Bank's Country Code column is ISO-3 character code
+        - This is because the WVS 2020's C_COW_ALPHA column has Correlates of War character codes, but the World Bank's Country Code column has ISO-3 character codes.
         - Though these codes look similar at a first glance, they are different and will only result in 6 countries matching out of a possible 14 countries
     - We can use the "countrycode" package to create a new column for the WVS 2020 dataset that lists the country's ISO-3 character code based on its Correlates of War charater code
         - Though we could add a Correlates of War character code column to the World Bank dataset, it appears that not all countries in this dataset have Correlates of War character codes based on the "countrycode" package warnings
@@ -186,32 +186,22 @@ Note: Some columns are character data in R, even though they are recorded as num
 Hint: use an `if` condition inside your function.
 
 ```{r}
-# FUTURE: is there a way to loop over and mutate all columns within a dataset?
 convertToNumeric <- function (column) {
   if (is.numeric(column)) {
     column
   }
-  # Causes warning "NAs introduced by coercion"
+
   as.numeric(column)
 }
 
-WVS_WB_Updated <- WVS_WB |>
-  mutate(
-    `Q112` = convertToNumeric(`Q112`),
-    `Q113` = convertToNumeric(`Q113`),
-    `Q114` = convertToNumeric(`Q114`),
-    `Q115` = convertToNumeric(`Q115`),
-    `Q116` = convertToNumeric(`Q116`),
-    `Q117` = convertToNumeric(`Q117`),
-    `GDP` = convertToNumeric(`GDP`),
-    `FDI` = convertToNumeric(`FDI`),
-    `GDPgr` = convertToNumeric(`GDPgr`),
-    `Oilrents` = convertToNumeric(`Oilrents`),
-    `Taxrevenue` = convertToNumeric(`Taxrevenue`),
-    `ControlCorruption` = convertToNumeric(`ControlCorruption`),
-    `CPIA` = convertToNumeric(`CPIA`),
-    `log GDP` = convertToNumeric(`log GDP`)
-  )
+# Followed examples in Data1 Chapter 21: https://r4ds.had.co.nz/iteration.html
+WVS_WB_Updated <- WVS_WB
+for (i in seq_along(WVS_WB_Updated2)) {
+  name <- names(WVS_WB_Updated2)[[i]]
+  if (! name %in% c("A_YEAR", "C_COW_ALPHA", "C_ISO3_C", "D_INTERVIEW", "Country Name")) {
+    WVS_WB_Updated[[i]] <- convertToNumeric(WVS_WB_Updated2[[i]])
+  }
+}
 
 head(WVS_WB_Updated, 10)
 tail(WVS_WB_Updated, 10)
@@ -270,6 +260,24 @@ animalNames = read_csv("data/Animal-names.csv")
 
 ```{r}
 
+names = animalNames |>
+  select(`name`)
+
+longestName <- ""
+for (name in animalNames) {
+  print(name[2])
+  if (str_length(name[1]) > str_length(longestName)) {
+    longestName <- name[1]
+  }
+}
+for (i in seq_along(animalNames)) {
+  name <- names(animalNames)[[i]]
+  value <- animalNames[[i]]
+  print(name)
+  print(value)
+}
+
+print(longestName)
 ```
 
 \(2\) Use a string function to detect if the following names are present in the data: "Whale", "Jaguar", "Panda", "Capybara", and "Shark". Please write a **for loop** to iterate over the vector of names, and print out whether each animal is found in the column name.
