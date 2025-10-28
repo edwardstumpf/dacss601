@@ -269,9 +269,7 @@ longestLength <- 0
 for (name in uniqueNames[[1]]) {
   if (str_length(name) == longestLength) {
     longestName <- append(longestName, name)
-  }
-  
-  if (str_length(name) > longestLength) {
+  } else if (str_length(name) > longestLength) {
     longestName <- c(name)
     longestLength <- str_length(name)
   }
