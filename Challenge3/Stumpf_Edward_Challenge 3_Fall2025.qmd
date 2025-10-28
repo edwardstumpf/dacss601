@@ -290,7 +290,17 @@ Hint: In regular expressions, the **anchoring symbols**
 Together, `"^Whale$"` means “the entire string is exactly `Whale`,” not “contains Whale somewhere inside.” You can build such a pattern dynamically using: `paste0("^", string, "$")` .
 
 ```{r}
+hasNameForLoop <- function(data, names) {
+  namesRegex = paste0(names, collapse = "|")
+  fullRegex = paste0("^(", namesRegex, ")$")
+  for (name in animalNames[[2]]) {
+    if (str_detect(name, fullRegex)) {
+      print(paste0("Found: ", name))
+    }
+  }
+}
 
+hasNameForLoop(animalNames, c("Whale", "Jaguar", "Panda", "Capybara", "Shark"))
 ```
 
 \(3\) Similar to question(2), use a string function to detect if the following names are present in the data: "Whale", "Jaguar", "Panda", "Capybara", and "Shark". This time, **write a function and use `purrr::map`**.
