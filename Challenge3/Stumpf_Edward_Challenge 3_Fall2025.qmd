@@ -344,6 +344,21 @@ head(animalNames)
 
 \(4\) Find all "Bear" entries in the data and replace "Bear" with "Cub". Only display the rows where the name has changed. Note: Be careful not to replace words that merely contain "Bear" as part of a longer word — such as "Bearded Dragon" — which should remain unchanged.
 
+- Only 1 row is update: id 79
+
 ```{r}
+cub = "Cub"
+
+bearCub <- animalNames |>
+  mutate(
+    name = str_replace(
+      name,
+      pattern = createRegexPattern(c("Bear")), # using function from 3.2
+      replacement = cub
+    )
+  ) |>
+  filter(name == cub)
+
+head(bearCub)
 
 ```
