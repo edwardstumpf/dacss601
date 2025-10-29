@@ -228,7 +228,8 @@ summaryStatistics <- function (column) {
     countNAs = column |>
       is.na() |>
       sum(),
-    countUnique = NA # TODO
+    countUnique = column |>
+      n_distinct()
   )
   
   return(statistics)
@@ -290,7 +291,8 @@ Hint: In regular expressions, the **anchoring symbols**
 Together, `"^Whale$"` means “the entire string is exactly `Whale`,” not “contains Whale somewhere inside.” You can build such a pattern dynamically using: `paste0("^", string, "$")` .
 
 ```{r}
-# I'm a developer past experience using regex, so I expanded on the regex suggestion for the task
+# I'm a developer past experience using regex, 
+# so I expanded on the regex suggestion for the task
 createRegexPattern <- function(values) {
   valuesRegex = paste0(values, collapse = "|")
   fullRegex = paste0("^(", valuesRegex, ")$")
