@@ -196,10 +196,10 @@ convertToNumeric <- function (column) {
 
 # Followed examples in Data1 Chapter 21: https://r4ds.had.co.nz/iteration.html
 WVS_WB_Updated <- WVS_WB
-for (i in seq_along(WVS_WB_Updated2)) {
-  name <- names(WVS_WB_Updated2)[[i]]
+for (i in seq_along(WVS_WB_Updated)) {
+  name <- names(WVS_WB_Updated)[[i]]
   if (! name %in% c("A_YEAR", "C_COW_ALPHA", "C_ISO3_C", "D_INTERVIEW", "Country Name")) {
-    WVS_WB_Updated[[i]] <- convertToNumeric(WVS_WB_Updated2[[i]])
+    WVS_WB_Updated[[i]] <- convertToNumeric(WVS_WB_Updated[[i]])
   }
 }
 
@@ -290,6 +290,7 @@ Hint: In regular expressions, the **anchoring symbols**
 Together, `"^Whale$"` means “the entire string is exactly `Whale`,” not “contains Whale somewhere inside.” You can build such a pattern dynamically using: `paste0("^", string, "$")` .
 
 ```{r}
+# I'm a developer past experience using regex, so I expanded on the regex suggestion for the task
 hasNameForLoop <- function(data, names) {
   namesRegex = paste0(names, collapse = "|")
   fullRegex = paste0("^(", namesRegex, ")$")
@@ -307,6 +308,19 @@ hasNameForLoop(animalNames, c("Whale", "Jaguar", "Panda", "Capybara", "Shark"))
 
 ```{r}
 # Use the Anchoring (a way of regular expression), "^animal$", to specify the word that you search for. By using Anchoring ("^"and"$"), you can search the exact animal by specifying the beginning and the ending letters.
+
+createNameRegex <- function(names) {
+  namesRegex = paste0(names, collapse = "|")
+  fullRegex = paste0("^(", namesRegex, ")$")
+  
+  return(fullRegex)
+}
+
+names <- c("Whale", "Jaguar", "Panda", "Capybara", "Shark")
+
+animalNames |>
+  select(name) |>
+  map(str_subset, pattern = createNameRegex(names))
 
 ```
 
