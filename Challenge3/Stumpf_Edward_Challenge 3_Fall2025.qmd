@@ -55,8 +55,10 @@ Suppose we have a research project that studies individuals' corruption percepti
 wvs2020Initial <- read_csv("data/WVS_2020.csv")
 worldBank <- read_csv("data/Worldbank_wide.csv")
 
+dim(wvs2020Initial)
 head(wvs2020Initial, 10)
 tail(wvs2020Initial, 10)
+dim(worldBank)
 head(worldBank, 10)
 tail(worldBank, 10)
 ```
@@ -92,15 +94,24 @@ tail(wvs2020, 10)
 
     \(1\) In this project, what is our unit of analysis?
     
-    - TODO
+    - A country in a given year
 
     \(2\) Which is the primary data, and what is its unit of observation? Which is the foreign data, and what is its unit of observation?
     
-    - TODO
+    - The primary data is the World Bank dataset. It's unit of observation is a country in a given year
+    - The foreign data is the WVS 2020 dataset. It's unit of observation is citizens in a country in 2020
+      - From https://www.worldvaluessurvey.org/WVSDocumentationWV7.jsp
 
     \(3\) What is(are) the key(s) for the two data?
     
-    - TODO
+    - World Bank dataset:
+      - primary key is "...1" (there's no real column label in the .csv)
+        - compound primary key would be "Country Code" and "Year"
+    - WVS 2020 dataset:
+      - primary key is "D_INTERVIEW"
+      - foreign keys: "A_YEAR"
+        - C_COW_ALPHA needs to be convert from Correlates of War character codes ISO-3 character codes to join on the "Country Code"
+        - See more in 1.3
 
     \(4\) How many unique countries are there in the WVS_2020 data? How many unique countries are there in the WorldBank_corruption data?
 
@@ -142,6 +153,12 @@ wvs2020Iso3 <- wvs2020 |>
   )
 
 head(wvs2020Iso3, 10)
+tail(wvs2020Iso3, 10)
+
+distinctCodes = wvs2020Iso3 |>
+  select(`C_COW_ALPHA`, `C_ISO3_C`) |>
+  distinct()
+head(distinctCodes, 15)
 ```
 
 \(2\) Join the two data (WVS and World Bank). Please print the first few entries as a sanity check. Name the joined data as "WVS_WB"
@@ -162,9 +179,14 @@ write_csv(WVS_WB, "WVS_WB.csv")
 4.  **Describe the data structure of the newly joined data *WVS_WB*. What is its dimension (# of rows and \# of columns)? What is its unit of observation? How many unique countries are there in the WVS_WB data? Compared to the original WVS data, does the above data combination change the dimension and unit of observation?**
 
 - Dimensions: There are 21,187 rows and 20 columns of data
-- Unit of Observation: TODO
+- Unit of Observation: the unit of observation is citizens in a country in 2020 and information about that country in 2020
 - Unique Countries: There are 14 unique countries in the dataset.  This makes sense, since there were only 14 countries in the original WVS 2020 dataset and we performed an inner join to generate this dataset, which will only keeps observations that exist in both datasets
-- Changes: TODO
+- Changes:
+  - Originally there were 21,187 rows and 10 columns in the WVS 2020 dataset (original columns plus a new ISO-3 country code column), and 4,991 rows and 12 columns in the World Bank dataset
+  - The join kept all non-key columns and then kept the first key columns uses in the join
+    - 8 from WVS 2020, 10 from World Bank, and then a ISO-3 country code column and a year column for a total of 20 columns
+  - Since all countries in the WVS 2020 dataset existed in the World Bank dataset, it was able to join for all rows in that dataset (21,187)
+  - The unit of observation is the combined units of observation from the 2 tables
 
 ```{r}
 dim(WVS_WB)
