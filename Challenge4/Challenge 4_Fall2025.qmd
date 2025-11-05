@@ -60,38 +60,92 @@ wvsWb <- read_csv("data/WVS_WB.csv")
 
 ```{r}
 #type of your code/command here.
-
-
+summary(wvsWb)
+wvsWb |>
+  select(`ControlCorruption`) |>
+  distinct()
+wvsWb |>
+  select(`CPIA`) |>
+  distinct()
 ```
 
--   Age
+-   Age: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Age question provides a number of discrete categories (specifically, age ranges plus wield values).  There are 6 discrete categories plus an additional wield value group, so this data is best represented by a *Simple Bar Chart*
 
 ```{r}
 #type of your code/command here.
+# Column: X003R
+# From Codebook:
+# 1.- 16-24 years
+# 2.- 25-34 years
+# 3.- 35-44 years
+# 4.- 45-54 years
+# 5.- 55-64 years
+# 6.- 65 and over 
+# -1-.- Don't know
+# -2-.- No answer
+# -4-.- Not asked
+# -5-.- Missing; Not available; AU: Other
+
+# Discrete categories: Bar Chart
 ```
 
--   Sex
+-   Sex: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides a number of discrete categories (specifically, male or female plus wield values).  There are 2 discrete categories plus an additional wield value group, so this data is best represented by a *Pie Chart*
 
 ```{r}
 #type of your code/command here.
+# Column: Q260
+# From Codebook
+# 1.- Male
+# 2.- Female
+# -2-.- No answer
+# -4-.- Not asked
+# -5-.- Missing; Not available; AU: Other
+
 ```
 
--   Perceptions of corruption
+-   Perceptions of corruption: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides used a Likert scale (specifically, values 1 through 10 plus wield values).  Likert scales provide ordinal data, so this data is best represented by a *Histogram*
 
 ```{r}
 #type of your code/command here.
+# Column: Q112
+# From Codebook:
+# Now I'd like you to tell me your views on corruption – when people pay a bribe, give a 
+# gift or do a favor to other people in order to get the things they need done or the services 
+# they need. How would you place your views on corruption in your country on a 10-point 
+# scale where “1” means “there is no corruption in this country” and “10” means “there 
+# is abundant corruption in this country”. If your views are somewhat mixed, choose the 
+# appropriate number in between.
+# 1.- 1
+# 2.- 2
+# 3.- 3
+# 4.- 4
+# 5.- 5
+# 6.- 6
+# 7.- 7
+# 8.- 8
+# 9.- 9
+# 10.- 10
+# -1-.- Don´t know
+# -2-.- No answer
+# -4-.- Not asked
+# -5-.- Missing; Not available
+
 ```
 
--   Control of Corruption
+-   Control of Corruption: according to the summary statistics and number of distinct values, there 14 distinct values (without equivalent to NA) that include negative and positive numbers. There are fewer than 20 of these continuous values, so this data can be represented by a *Histogram*
 
 ```{r}
 #type of your code/command here.
+# Column: ControlCorruption
 ```
 
--   CPIA
+-   CPIA: according to the World Bank FAQ, the CPIA is a scale of 1 (low) to 6 (high). The summary statistics and number of distinct values within this dataset, there 4 distinct values (including the equivalent to NA) that are all positive numeric values (note: column data is currently in characters). Rather than being ordinal data (as the scale description would indicate), this data is interval data, since not all of these values are whole numbers. Given this and the number of distinct values being under 20, this data is best represented by a *Histogram*
+See: B.Q5 in the online [Country Policy and Institutional Assessment: Frequently Asked Questions PDF](https://thedocs.worldbank.org/en/doc/469321531149313421-0290022018/original/CPIAwebFAQ17.pdf)
 
 ```{r}
 #type of your code/command here.
+# Column: CPIA
+# Note: not initially numeric
 ```
 
 3.  **Suppose we want to test two hypotheses on the relationships of two pairs of variables**. **Please use the appropriate type of graphs we learned to visualize these two pairs of variables.**
