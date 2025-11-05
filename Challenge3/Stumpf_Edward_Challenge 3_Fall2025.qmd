@@ -1,0 +1,388 @@
+---
+title: "Challenge_3: Joining Relational Data, Writing Your Own Functions, and String Operations"
+author: "Edward Stumpf"
+description: ""
+date: "10/26/2025"
+format: 
+  html: 
+    embed-resources: true
+    self-contained-math: true
+---
+
+**Make sure you change the author's name in the above YAML header.** **Name the html file as Lastname_Firstname_Challenge3.html**
+
+## Setup
+
+If you have not installed the following packages, please install them before loading them.
+
+```{r}
+#| label: setup
+#| warning: false
+#| message: false
+
+library(readr)
+library(dplyr)
+library(purrr)
+```
+
+## Challenge Overview
+
+In this challenge, we will practice `join()` with relational data, use string functions to process, extract information, and mutate and clean data. We will also practice wring own functions.
+
+There will be coding components and writing components. Please read the instructions for each part and complete your challenges.
+
+## Datasets
+
+There are three datasets provided in this challenge. Please download the following dataset files from Google Classroom and save them to a folder within your project working directory (for example, one called "data"). If you don't have a folder to store the datasets, please create one.
+
+-   Part 1 and 2: WVS_2020.csv and WorldBank_corruption ⭐⭐
+-   Part 3: Animal-names.csv ⭐
+
+Find the `data` folder, then use the correct R command to read the datasets.
+
+## Part 1. Joining Individual-level and Country-Level Data
+
+Suppose we have a research project that studies individuals' corruption perception, and we are interested in **how a country's tax revenue influences individuals' corruption perception**. In this case, we will need to combine the two data for future analysis.
+
+1.  **Read the two raw datasets:** `WVS_2020.csv` and`Worldbank_wide.csv`(the wide-version of the World Bank dataset created in Challenge#2)**.**
+
+    Note#1: the world bank wide data here is a clean version. You can directly load it and use it.
+
+    Note#2: Please read the WVS codebook and recode "Don't know", "No answer", "Not asked", and "Missing; Not available" as NA.
+
+```{r}
+#read the two datasets and preview them.
+wvs2020Initial <- read_csv("data/WVS_2020.csv")
+worldBank <- read_csv("data/Worldbank_wide.csv")
+
+dim(wvs2020Initial)
+head(wvs2020Initial, 10)
+tail(wvs2020Initial, 10)
+dim(worldBank)
+head(worldBank, 10)
+tail(worldBank, 10)
+```
+
+```{r}
+#recode the WVS dataset based on the codebook. 
+
+recodeWvsResponse <- function (column) {
+  case_when(
+    column == -1 ~ NA,
+    column == -2 ~ NA,
+    column == -4 ~ NA,
+    column == -5 ~ NA,
+    TRUE ~ column
+  )
+}
+
+wvs2020 <- wvs2020Initial |>
+  mutate(
+    Q112 = recodeWvsResponse(Q112),
+    Q113 = recodeWvsResponse(Q113),
+    Q114 = recodeWvsResponse(Q114),
+    Q115 = recodeWvsResponse(Q115),
+    Q116 = recodeWvsResponse(Q116),
+    Q117 = recodeWvsResponse(Q117),
+  )
+
+head(wvs2020, 10)
+tail(wvs2020, 10)
+```
+
+2.  **Answer the following questions:**
+
+    \(1\) In this project, what is our unit of analysis?
+    
+    - A country in a given year
+
+    \(2\) Which is the primary data, and what is its unit of observation? Which is the foreign data, and what is its unit of observation?
+    
+    - The primary data is the World Bank dataset. It's unit of observation is a country in a given year
+    - The foreign data is the WVS 2020 dataset. It's unit of observation is citizens in a country in 2020
+      - From https://www.worldvaluessurvey.org/WVSDocumentationWV7.jsp
+
+    \(3\) What is(are) the key(s) for the two data?
+    
+    - World Bank dataset:
+      - primary key is "...1" (there's no real column label in the .csv)
+        - compound primary key would be "Country Code" and "Year"
+    - WVS 2020 dataset:
+      - primary key is "D_INTERVIEW"
+      - foreign keys: "A_YEAR"
+        - C_COW_ALPHA needs to be convert from Correlates of War character codes ISO-3 character codes to join on the "Country Code"
+        - See more in 1.3
+
+    \(4\) How many unique countries are there in the WVS_2020 data? How many unique countries are there in the WorldBank_corruption data?
+
+    - There are 14 unique countries in the WVS 2020 data set
+    - There are 212 unique countries in the World Bank dataset
+
+```{r}
+wvs2020 |>
+  select(C_COW_ALPHA) |>
+  summarise_all(n_distinct)
+
+worldBank |>
+  select(`Country Code`) |>
+  summarise_all(n_distinct)
+```
+
+3.  **Suppose we have a theory that a country's tax revenue affects an individual's perception of corruption . We must merge the two data.**
+
+    \(1\) What column(s) will we use as a matching key(s) for combining the updated WVS dataset and World Bank dataset? Note: you can use multiple matching strategies, but I suggest we create a common matching key for both data if there are none.
+
+    - We will need to create a new key for matching countries
+        - This is because the WVS 2020's C_COW_ALPHA column has Correlates of War character codes, but the World Bank's Country Code column has ISO-3 character codes.
+        - Though these codes look similar at a first glance, they are different and will only result in 6 countries matching out of a possible 14 countries
+    - We can use the "countrycode" package to create a new column for the WVS 2020 dataset that lists the country's ISO-3 character code based on its Correlates of War charater code
+        - Though we could add a Correlates of War character code column to the World Bank dataset, it appears that not all countries in this dataset have Correlates of War character codes based on the "countrycode" package warnings
+    - Once this is done, we can use the WVS 2020 data set's A_YEAR and C_COW_ALPHA columns and the updated World Bank data set's Year and new C_COW_ALPHA columns as our join keys
+
+```{r}
+# Adapted from Challenge 2 solution set and "countrycode" package R Documentation
+# origin: cowc - Correlates of War character
+# destination: iso3c - ISO-3 character
+
+library(countrycode)
+
+wvs2020Iso3 <- wvs2020 |>
+  mutate(
+    C_ISO3_C = countrycode(`C_COW_ALPHA`, "cowc", "iso3c"),
+    .after = `C_COW_ALPHA`
+  )
+
+head(wvs2020Iso3, 10)
+tail(wvs2020Iso3, 10)
+
+distinctCodes = wvs2020Iso3 |>
+  select(`C_COW_ALPHA`, `C_ISO3_C`) |>
+  distinct()
+head(distinctCodes, 15)
+```
+
+\(2\) Join the two data (WVS and World Bank). Please print the first few entries as a sanity check. Name the joined data as "WVS_WB"
+
+```{r}
+WVS_WB <- wvs2020Iso3 |>
+  inner_join(worldBank, by = c("C_ISO3_C" = "Country Code", "A_YEAR" = "Year"))
+
+head(WVS_WB, 10)
+```
+
+\(3\) Save the joined data *WVS_WB* to your local directory using the following code. We will be using this joined data to explore visualization in future challenges. (This is for future usage. No need to submit the saved joined data.)
+
+```{r}
+write_csv(WVS_WB, "WVS_WB.csv")
+```
+
+4.  **Describe the data structure of the newly joined data *WVS_WB*. What is its dimension (# of rows and \# of columns)? What is its unit of observation? How many unique countries are there in the WVS_WB data? Compared to the original WVS data, does the above data combination change the dimension and unit of observation?**
+
+- Dimensions: There are 21,187 rows and 20 columns of data
+- Unit of Observation: the unit of observation is citizens in a country in 2020 and information about that country in 2020
+- Unique Countries: There are 14 unique countries in the dataset.  This makes sense, since there were only 14 countries in the original WVS 2020 dataset and we performed an inner join to generate this dataset, which will only keeps observations that exist in both datasets
+- Changes:
+  - Originally there were 21,187 rows and 10 columns in the WVS 2020 dataset (original columns plus a new ISO-3 country code column), and 4,991 rows and 12 columns in the World Bank dataset
+  - The join kept all non-key columns and then kept the first key columns uses in the join
+    - 8 from WVS 2020, 10 from World Bank, and then a ISO-3 country code column and a year column for a total of 20 columns
+  - Since all countries in the WVS 2020 dataset existed in the World Bank dataset, it was able to join for all rows in that dataset (21,187)
+  - The unit of observation is the combined units of observation from the 2 tables
+
+```{r}
+dim(WVS_WB)
+
+WVS_WB |>
+  select(`Country Name`) |>
+  summarise_all(n_distinct)
+```
+
+## Part 2. Writing Your Own Functions
+
+Please use the joined data ***WVS_WB*** in Part 1 and complete the following tasks.
+
+\(1\) Write **one function** to check these columns (except the columns of *Year*, *Country Name*, *Country Code*, and *Interviewer ID*)\
+to see if they are numeric or not, and convert them to numeric if they are not.
+
+Note: Some columns are character data in R, even though they are recorded as numbers. Why? Because there are pseudo-missing strings such as `"NA"` or `"/NA"` in the column, and R treats the whole column as character. Pseudo-missing strings are text versions of missing values that *look* like “NA” to humans but are not real missing values (`NA`) in R.
+
+Hint: use an `if` condition inside your function.
+
+```{r}
+convertToNumeric <- function (column) {
+  if (is.numeric(column)) {
+    column
+  }
+
+  as.numeric(column)
+}
+
+# Followed examples in Data1 Chapter 21: https://r4ds.had.co.nz/iteration.html
+WVS_WB_Updated <- WVS_WB
+for (i in seq_along(WVS_WB_Updated)) {
+  name <- names(WVS_WB_Updated)[[i]]
+  if (! name %in% c("A_YEAR", "C_COW_ALPHA", "C_ISO3_C", "D_INTERVIEW", "Country Name")) {
+    WVS_WB_Updated[[i]] <- convertToNumeric(WVS_WB_Updated[[i]])
+  }
+}
+
+head(WVS_WB_Updated, 10)
+tail(WVS_WB_Updated, 10)
+```
+
+\(2\) Write **ONE** function to conduct summary statistics of the range, average, standard deviation, number of NAs, and the number of unique values of any given numeric columns:
+
+```{r}
+library(stringr)
+
+summaryStatistics <- function (column) {
+  # Do not generate statistics for non-numeric values
+  if (! is.numeric(column)) {
+    return(NA)
+  }
+
+  statistics <- tibble(
+    range = str_c(
+      range(column, na.rm = TRUE),
+      collapse = " - " # from str_c R Documentation
+    ),
+    average = mean(column, na.rm = TRUE),
+    sd = sd(column, na.rm = TRUE),
+    countNAs = column |>
+      is.na() |>
+      sum(),
+    countUnique = column |>
+      n_distinct()
+  )
+  
+  return(statistics)
+}
+
+```
+
+\(3\) Test your summary statistics function with Control Corruption, CPIA, Q112, Q113, and Q115. (check this)
+
+```{r}
+summaryStatistics(WVS_WB_Updated$`ControlCorruption`)
+summaryStatistics(WVS_WB_Updated$`CPIA`)
+summaryStatistics(WVS_WB_Updated$`Q112`)
+summaryStatistics(WVS_WB_Updated$`Q113`)
+summaryStatistics(WVS_WB_Updated$`Q115`)
+```
+
+## Part 3. Practicing Stringr Package and Iteration with Animal-names.csv
+
+1.  **Import the Animal-names data:**
+
+```{r}
+animalNames = read_csv("data/Animal-names.csv")
+```
+
+2.  **Use different string functions from stringr package to answer the following questions:**
+
+    \(1\) Find and list the longest animal name (or names, if there are multiple names that are equally longest). Hint: you can make use of base R's `nchar` 
+    
+    - There are 3 values with length 35:
+      - Amazon River Dolphin (Pink Dolphin)
+      - Golden Retriever Complete Pet Guide
+      - Welsh Corgi: The Complete Pet Guide
+
+```{r}
+longestName <- c()
+longestLength <- 0
+for (name in animalNames[[2]]) {
+  if (str_length(name) == longestLength) {
+    longestName <- append(longestName, name)
+  } else if (str_length(name) > longestLength) {
+    longestName <- c(name)
+    longestLength <- str_length(name)
+  }
+}
+
+print(longestName)
+print(longestLength)
+```
+
+\(2\) Use a string function to detect if the following names are present in the data: "Whale", "Jaguar", "Panda", "Capybara", and "Shark". Please write a **for loop** to iterate over the vector of names, and print out whether each animal is found in the column name.
+
+Hint: In regular expressions, the **anchoring symbols**
+
+-    `^` (caret) marks the **beginning** of a string
+
+-    `$` (dollar sign) marks the **end** of a string
+
+Together, `"^Whale$"` means “the entire string is exactly `Whale`,” not “contains Whale somewhere inside.” You can build such a pattern dynamically using: `paste0("^", string, "$")` .
+
+```{r}
+# I'm a developer past experience using regex, 
+# so I expanded on the regex suggestion for the task
+createRegexPattern <- function(values) {
+  valuesRegex = paste0(values, collapse = "|")
+  fullRegex = paste0("^(", valuesRegex, ")$")
+  
+  return(fullRegex)
+}
+
+hasPatternForLoop <- function(data, pattern) {
+  for (name in animalNames[[2]]) {
+    if (str_detect(name, pattern)) {
+      print(paste0("Found: ", name))
+    }
+  }
+}
+
+hasPatternForLoop(
+  animalNames, 
+  createRegexPattern(
+    c("Whale", "Jaguar", "Panda", "Capybara", "Shark")
+  )
+)
+```
+
+\(3\) Similar to question(2), use a string function to detect if the following names are present in the data: "Whale", "Jaguar", "Panda", "Capybara", and "Shark". This time, **write a function and use `purrr::map`**.
+
+```{r}
+# Use the Anchoring (a way of regular expression), "^animal$", to specify the word that you search for. By using Anchoring ("^"and"$"), you can search the exact animal by specifying the beginning and the ending letters.
+
+names <- c("Whale", "Jaguar", "Panda", "Capybara", "Shark")
+
+animalNames |>
+  select(name) |>
+  map(str_subset, pattern = createRegexPattern(names)) # using function from 3.2
+
+```
+
+\(3\) Create a column *IDName,* by combing the strings of columns *id* and *name*, separating by a period. For example, a value in this new column should be like "1.Aardvark".
+
+```{r}
+
+animalNames <- animalNames |>
+  mutate(
+    IDName = str_c(
+      id, name,
+      sep = "."
+    )
+  )
+
+head(animalNames)
+```
+
+\(4\) Find all "Bear" entries in the data and replace "Bear" with "Cub". Only display the rows where the name has changed. Note: Be careful not to replace words that merely contain "Bear" as part of a longer word — such as "Bearded Dragon" — which should remain unchanged.
+
+- Only 1 row is update: id 79
+
+```{r}
+cub = "Cub"
+
+bearCub <- animalNames |>
+  mutate(
+    name = str_replace(
+      name,
+      pattern = createRegexPattern(c("Bear")), # using function from 3.2
+      replacement = cub
+    )
+  ) |>
+  filter(name == cub)
+
+head(bearCub)
+
+```
