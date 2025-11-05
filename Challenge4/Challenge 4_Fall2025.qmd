@@ -1,8 +1,8 @@
 ---
 title: "Challenge_4: Intro to Visulization: Univariate and Multivariate Graphs"
-author: " "
+author: "Edward Stumpf"
 description: ""
-date: ""
+date: "11/4/2025"
 format:
   html:
     df-print: paged
@@ -17,9 +17,9 @@ format:
 If you have not installed the following packages, please install them before loading them.
 
 ```{r}
-#library(tidyverse)
-#library(readr)
-#library(ggplot2) # if you have not installed this package, please install it.
+library(tidyverse)
+library(readr)
+library(ggplot2) # if you have not installed this package, please install it.
 ```
 
 ## Challenge Overview
@@ -45,7 +45,7 @@ We have been working with these two data in the previous three challenges. Suppo
 
 ```{r}
 #type of your code/command here.
-
+wvsWb <- read_csv("data/WVS_WB.csv")
 ```
 
 2.  **Suppose we are interested in the central tendencies and distributions of the following variables. At the individual level:** *Q260 (sex), X003R (age)* and *Q112 (perceptions of corruption)*. **At the country level**: *ControlCorruption* and *CPIA*.
@@ -118,6 +118,7 @@ In this part, we will use the athlete_events data.
 
 ```{r}
 #type of your code/command here.
+athleteEvents <- read_csv("data/athlete_events.csv")
 ```
 
 2.  Use a barplot to graph the Athlete data based on Medal: Gold, Silver, Bronze, and NA (no metal). The y-axis should be the count of medals, and each medal, including NA, should be represented by one individual bar (so there should be four bars).
