@@ -1,0 +1,150 @@
+---
+title: "Challenge_4: Intro to Visulization: Univariate and Multivariate Graphs"
+author: " "
+description: ""
+date: ""
+format:
+  html:
+    df-print: paged
+    embed-resources: true
+    self-contained-math: true
+---
+
+**Make sure you change the author's name in the above YAML header.**
+
+## Setup
+
+If you have not installed the following packages, please install them before loading them.
+
+```{r}
+#library(tidyverse)
+#library(readr)
+#library(ggplot2) # if you have not installed this package, please install it.
+```
+
+## Challenge Overview
+
+In this challenge, we will practice with the data we worked on in the previous challenges and the data you choose to do some simple data visualizations using the `ggplot2` package.
+
+There will be coding components and writing components. Please read the instructions for each part and complete your challenges.
+
+**Graph customization requirement: you should at least include a title for any graph you make.** It is optional for you to apply other commands and functions to customize title, legend, color, note, theme, and other graph elements.
+
+## Datasets
+
+-   Part 1 the WVS_WB Data (created in Challenge#3) ⭐⭐
+-   Part 2: the athlete_events Data (from Challenge#1) ⭐⭐
+
+Find the `_data` folder, then read the datasets using the correct R command.
+
+## Part 1. Univariate and Multivariate Graphs (60%)
+
+We have been working with these two data in the previous three challenges. Suppose we have a research project that studies individuals' corruption perception, and we are interested in how the countries that respondents live in influence their opinion. In this challenge, let's work with the combined dataset *WVS_WB* and create some visualizations.
+
+1.  **Read the combined data you created in Challenge#3.**
+
+```{r}
+#type of your code/command here.
+
+```
+
+2.  **Suppose we are interested in the central tendencies and distributions of the following variables. At the individual level:** *Q260 (sex), X003R (age)* and *Q112 (perceptions of corruption)*. **At the country level**: *ControlCorruption* and *CPIA*.
+
+    \(1\) For each of the five variables (*Q260, Q275K, Q112, ControlCorruption, and CPIA*), please choose an appropriate type of univariate graph to plot the central tendencies and distribution of the variables for each of them. Explain why you choose this type of graph to present a particular variable (for example: "I use a histogram to plot *ControlCorruption* because it is a continuous numeric variable").
+
+    **(Note 1: You should use at least two types of univariate graphs covered in the lecture.)**
+
+    **(hint 1: You should do summary statistics and check data type to examine each variable and decide what chart type to use. It's up to you what functions you want to use to conduct summary statistics and check data type.)**
+
+    **(hint 2: don't forgot to check if the data contains "wield values", such as negative numbers. You should decide whether treat them as NA or not.)**
+
+```{r}
+#type of your code/command here.
+
+
+```
+
+-   Age
+
+```{r}
+#type of your code/command here.
+```
+
+-   Sex
+
+```{r}
+#type of your code/command here.
+```
+
+-   Perceptions of corruption
+
+```{r}
+#type of your code/command here.
+```
+
+-   Control of Corruption
+
+```{r}
+#type of your code/command here.
+```
+
+-   CPIA
+
+```{r}
+#type of your code/command here.
+```
+
+3.  **Suppose we want to test two hypotheses on the relationships of two pairs of variables**. **Please use the appropriate type of graphs we learned to visualize these two pairs of variables.**
+
+    **Briefly describe the graph you plot, and answer: Does the graph we create from the data support the hypothesis?**
+
+\(1\) Hypothesis#1:
+
+```{r}
+#type of your code/command here.
+```
+
+\(2\) Hypothesis#2:
+
+```{r}
+#type of your code/command here.
+```
+
+## Part 2. Comparing between Partial and Whole, and among Groups (40%)
+
+In this part, we will use the athlete_events data.
+
+1.  Read in data.
+
+```{r}
+#type of your code/command here.
+```
+
+2.  Use a barplot to graph the Athlete data based on Medal: Gold, Silver, Bronze, and NA (no metal). The y-axis should be the count of medals, and each medal, including NA, should be represented by one individual bar (so there should be four bars).
+
+    (you can use either geom_bar() or geom_col())
+
+```{r}
+#type of your code/command here.
+
+```
+
+3.  The previous graph only shows the difference in amount. Let's create a stacked-to-100% barplot to show the proportion of each of the four medals (by % of the total response).
+
+(you can use either geom_bar() or geom_col())
+
+```{r}
+#type of your code/command here.
+
+```
+
+4.  Let's see if there's a relationship between Country and Medals - that is, are certain countries more likely to receive a certain type of metals compared to other countries? Given the large number of countries covered in the data, let's focus on the following contreis: Australia, Brazil, Canada, China, Germany, India, Russia, and the U.S.. Again, we will use barplot(s) to present the visualization.
+
+    (you can use either geom_bar() or geom_col())
+
+```{r}
+#type of your code/command here.
+
+
+
+```
