@@ -88,7 +88,7 @@ wvsWb |>
 
 # Adapted Function from my Challenge 3 submission
 # I am opting to recode all wield values for the investigated WVS survey questions
-# Using 0, since this value isn't used by the codebook
+# Using NA
 recodeX003R <- function (column) {
   case_when(
     column == -1 ~ "NA",
@@ -113,6 +113,7 @@ wvsWb |>
   ggplot(aes(x = X003R)) + 
     geom_bar() +
     labs(
+      caption = "Age recoded (6 intervals)",
       title = "World Values Survey Wave 7 ",
       x = "Age Ranges",
       y = "Count"
@@ -131,9 +132,36 @@ wvsWb |>
 # -4-.- Not asked
 # -5-.- Missing; Not available; AU: Other
 
+# Adapted Function from my Challenge 3 submission
+# I am opting to recode all wield values for the investigated WVS survey questions
+# Using NA
+recodeQ260 <- function (column) {
+  case_when(
+    column == -2 ~ "NA",
+    column == -4 ~ "NA",
+    column == -5 ~ "NA",
+    column == 1 ~ "Male",
+    column == 2 ~ "Female",
+    TRUE ~ "Unknown"
+  )
+}
+
+# Pie chart - need internet to make a pie chart, using bar for now
+wvsWb |>
+  mutate(
+    Q260 = recodeQ260(Q260), # sex
+  ) |>
+  ggplot(aes(x = Q260)) + 
+    geom_bar() +
+    labs(
+      caption = "Respondent’s sex",
+      title = "World Values Survey Wave 7 ",
+      x = "Sex",
+      y = "Count"
+    )
 ```
 
--   Perceptions of corruption: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides used a Likert scale (specifically, values 1 through 10 plus wield values).  Likert scales provide ordinal data, so this data is best represented by a *Histogram*
+-   Perceptions of corruption: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides used a Likert scale (specifically, values 1 through 10 plus NA values).  Likert scales provide ordinal data, so this data is best represented by a *Histogram*
 
 ```{r}
 #type of your code/command here.
@@ -160,6 +188,21 @@ wvsWb |>
 # -4-.- Not asked
 # -5-.- Missing; Not available
 
+# Excluding wield values already recoded to NA values
+wvsWb |>
+  ggplot(aes(x = Q112)) + 
+    geom_histogram(
+      binwidth = 1, 
+      na.rm = TRUE # from R Documentation
+    ) + 
+    labs(
+      caption = "How would you place your views on corruption in your country on a 10-point scale where “1” means 
+      “there is no corruption in this country” and “10” means “there is abundant corruption in this country”. 
+      If your views are somewhat mixed, choose the appropriate number in between.",
+      title = "World Values Survey Wave 7 ",
+      x = "Perceptions of Corruption",
+      y = "Count"
+    )
 ```
 
 -   Control of Corruption: according to the summary statistics and number of distinct values, there 14 distinct values (without equivalent to NA) that include negative and positive numbers. There are fewer than 20 of these continuous values, so this data can be represented by a *Histogram*
