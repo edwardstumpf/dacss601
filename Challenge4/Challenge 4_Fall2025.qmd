@@ -111,10 +111,13 @@ wvsWb |>
     X003R = recodeX003R(X003R), # age
   ) |>
   ggplot(aes(x = X003R)) + 
-    geom_bar() +
+    geom_bar(
+      color = 1,
+      fill = "lightblue"
+    ) +
     labs(
       caption = "Age recoded (6 intervals)",
-      title = "World Values Survey Wave 7 ",
+      title = "World Values Survey Wave 7",
       x = "Age Ranges",
       y = "Count"
     )
@@ -152,10 +155,13 @@ wvsWb |>
     Q260 = recodeQ260(Q260), # sex
   ) |>
   ggplot(aes(x = Q260)) + 
-    geom_bar() +
+    geom_bar(
+      color = 1,
+      fill = "lightblue"
+    ) +
     labs(
       caption = "Respondent’s sex",
-      title = "World Values Survey Wave 7 ",
+      title = "World Values Survey Wave 7",
       x = "Sex",
       y = "Count"
     )
@@ -193,13 +199,15 @@ wvsWb |>
   ggplot(aes(x = Q112)) + 
     geom_histogram(
       binwidth = 1, 
+      color = 1,
+      fill = "lightblue",
       na.rm = TRUE # from R Documentation
     ) + 
     labs(
       caption = "How would you place your views on corruption in your country on a 10-point scale where “1” means 
       “there is no corruption in this country” and “10” means “there is abundant corruption in this country”. 
       If your views are somewhat mixed, choose the appropriate number in between.",
-      title = "World Values Survey Wave 7 ",
+      title = "World Values Survey Wave 7",
       x = "Perceptions of Corruption",
       y = "Count"
     )
@@ -210,6 +218,19 @@ wvsWb |>
 ```{r}
 #type of your code/command here.
 # Column: ControlCorruption
+
+wvsWb |>
+  ggplot(aes(x = ControlCorruption)) + 
+  geom_histogram(
+    bins = 14, 
+    color = 1,
+    fill = "lightblue"
+  ) + 
+  labs(
+    title = "World Values Survey Wave 7",
+    x = "Control of Corruption",
+    y = "Count"
+  )
 ```
 
 -   CPIA: according to the World Bank FAQ, the CPIA is a scale of 1 (low) to 6 (high). The summary statistics and number of distinct values within this dataset, there 4 distinct values (including the equivalent to NA) that are all positive numeric values (note: column data is currently in characters). Rather than being ordinal data (as the scale description would indicate), this data is interval data, since not all of these values are whole numbers. Given this and the number of distinct values being under 20, this data is best represented by a *Histogram*
