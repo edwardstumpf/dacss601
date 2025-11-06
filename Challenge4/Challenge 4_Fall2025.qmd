@@ -105,6 +105,7 @@ recodeX003R <- function (column) {
   )
 }
 
+# TODO: can Y be a percentage?
 # Discrete categories: Bar Chart
 wvsWb |>
   mutate(
@@ -149,6 +150,7 @@ recodeQ260 <- function (column) {
   )
 }
 
+# TODO: can Y be a percentage?
 # Pie chart - need internet to make a pie chart, using bar for now
 wvsWb |>
   mutate(
@@ -194,6 +196,7 @@ wvsWb |>
 # -4-.- Not asked
 # -5-.- Missing; Not available
 
+# TODO: can Y be a percentage?
 # Excluding wield values already recoded to NA values
 wvsWb |>
   ggplot(aes(x = Q112)) + 
@@ -219,6 +222,7 @@ wvsWb |>
 #type of your code/command here.
 # Column: ControlCorruption
 
+# TODO: can Y be a percentage?
 wvsWb |>
   ggplot(aes(x = ControlCorruption)) + 
   geom_histogram(
@@ -240,6 +244,35 @@ See: B.Q5 in the online [Country Policy and Institutional Assessment: Frequently
 #type of your code/command here.
 # Column: CPIA
 # Note: not initially numeric
+
+# Adapted Function from my Challenge 3 submission
+# I am opting to recode all wield values for the investigated WVS survey questions
+# Using NA
+# TODO: get rid of numeric coercion
+recodeCPIA <- function (column) {
+  case_when(
+    column == ".." ~ NA,
+    TRUE ~ as.numeric(column)
+  )
+}
+
+# TODO: can Y be a percentage? Can we represent a range of 1 - 6?
+wvsWb |>
+  mutate(
+    CPIA = recodeCPIA(CPIA),
+  ) |>
+  ggplot(aes(x = CPIA)) + 
+  geom_histogram(
+    bins = 4,
+    color = 1,
+    fill = "lightblue",
+    na.rm = TRUE # from R Documentation
+  ) + 
+  labs(
+    title = "World Values Survey Wave 7",
+    x = "CPIA",
+    y = "Count"
+  )
 ```
 
 3.  **Suppose we want to test two hypotheses on the relationships of two pairs of variables**. **Please use the appropriate type of graphs we learned to visualize these two pairs of variables.**
