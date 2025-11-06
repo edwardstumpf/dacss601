@@ -86,7 +86,37 @@ wvsWb |>
 # -4-.- Not asked
 # -5-.- Missing; Not available; AU: Other
 
+# Adapted Function from my Challenge 3 submission
+# I am opting to recode all wield values for the investigated WVS survey questions
+# Using 0, since this value isn't used by the codebook
+recodeX003R <- function (column) {
+  case_when(
+    column == -1 ~ "NA",
+    column == -2 ~ "NA",
+    column == -4 ~ "NA",
+    column == -5 ~ "NA",
+    column == 1 ~ "16-24 years",
+    column == 2 ~ "25-34 years",
+    column == 3 ~ "35-44 years",
+    column == 4 ~ "45-54 years",
+    column == 5 ~ "55-64 years",
+    column == 6 ~ "65 and over",
+    TRUE ~ "Unknown"
+  )
+}
+
 # Discrete categories: Bar Chart
+wvsWb |>
+  mutate(
+    X003R = recodeX003R(X003R), # age
+  ) |>
+  ggplot(aes(x = X003R)) + 
+    geom_bar() +
+    labs(
+      title = "World Values Survey Wave 7 ",
+      x = "Age Ranges",
+      y = "Count"
+    )
 ```
 
 -   Sex: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides a number of discrete categories (specifically, male or female plus wield values).  There are 2 discrete categories plus an additional wield value group, so this data is best represented by a *Pie Chart*
