@@ -248,7 +248,7 @@ See: B.Q5 in the online [Country Policy and Institutional Assessment: Frequently
 # Adapted Function from my Challenge 3 submission
 # I am opting to recode all wield values for the investigated WVS survey questions
 # Using NA
-# TODO: get rid of numeric coercion
+# Future: get rid of numeric coercion
 recodeCPIA <- function (column) {
   case_when(
     column == ".." ~ NA,
@@ -312,7 +312,7 @@ wvsWb |>
 # Learned how to rotate x-axis text from Stack Overflow: https://stackoverflow.com/a/1331400
 wvsWb |>
   mutate(
-    X003R = recodeX003R(X003R), # age
+    X003R = recodeX003R(X003R), # age, borrowing function from earlier section
   ) |>
   filter(ControlCorruption < 0) |>
   ggplot(aes(fill = X003R, x = `Country Name`, y = Q112)) +
@@ -343,6 +343,10 @@ In this part, we will use the athlete_events data.
 ```{r}
 #type of your code/command here.
 athleteEvents <- read_csv("data/athlete_events.csv")
+
+athleteEvents |>
+  select(`Medal`) |>
+  distinct()
 ```
 
 2.  Use a barplot to graph the Athlete data based on Medal: Gold, Silver, Bronze, and NA (no metal). The y-axis should be the count of medals, and each medal, including NA, should be represented by one individual bar (so there should be four bars).
@@ -351,7 +355,9 @@ athleteEvents <- read_csv("data/athlete_events.csv")
 
 ```{r}
 #type of your code/command here.
-
+athleteEvents |>
+  ggplot(aes(x = `Medal`, fill = `Medal`)) +
+    geom_bar()
 ```
 
 3.  The previous graph only shows the difference in amount. Let's create a stacked-to-100% barplot to show the proportion of each of the four medals (by % of the total response).
@@ -360,16 +366,43 @@ athleteEvents <- read_csv("data/athlete_events.csv")
 
 ```{r}
 #type of your code/command here.
+#Percentage stacked plot
+
+# Took placeholder suggestion from https://stackoverflow.com/a/67557353
+# Note: I expect this is incorrect due to the missing percentages on the Y-axis,
+# but I'm struggling to find the appropriate solution
+athleteEvents |>
+  ggplot(aes(x = "", y = `Medal`, fill = `Medal`)) +
+    geom_col()
 
 ```
 
 4.  Let's see if there's a relationship between Country and Medals - that is, are certain countries more likely to receive a certain type of metals compared to other countries? Given the large number of countries covered in the data, let's focus on the following contreis: Australia, Brazil, Canada, China, Germany, India, Russia, and the U.S.. Again, we will use barplot(s) to present the visualization.
 
     (you can use either geom_bar() or geom_col())
+    
+    Countries that send more athletes to the Games are more likely to medal.  The United States and India are more likely to win a gold medal than other types of medals (if the athlete places).  Australia is more likeley to win a bronze medal than other types of medals (again, if the athlete places)
 
 ```{r}
 #type of your code/command here.
+# Verify our regex
+athleteEvents |>
+  filter(str_detect(
+    `Team`, 
+    "^(Australia|Brazil|Canada|China|Germany|India|Russia|United States)$"
+  )) |>
+  select(`Team`) |>
+  distinct()
 
-
+# generate the graph
+athleteEvents |>
+  filter(str_detect(
+    `Team`, 
+    "^(Australia|Brazil|Canada|China|Germany|India|Russia|United States)$"
+  )) |>
+  ggplot(aes(fill = `Medal`, x = `Team`)) +
+    geom_bar(
+      position="dodge"
+    )
 
 ```
