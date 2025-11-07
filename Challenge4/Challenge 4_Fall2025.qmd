@@ -105,7 +105,7 @@ recodeX003R <- function (column) {
   )
 }
 
-# TODO: can Y be a percentage?
+
 # Discrete categories: Bar Chart
 wvsWb |>
   mutate(
@@ -124,7 +124,7 @@ wvsWb |>
     )
 ```
 
--   Sex: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides a number of discrete categories (specifically, male or female plus wield values).  There are 2 discrete categories plus an additional wield value group, so this data is best represented by a *Pie Chart*
+-   Sex: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides a number of discrete categories (specifically, male or female plus wield values).  There are 2 discrete categories plus an additional wield value group, so this data is best represented by a *Pie Chart*.  The ggplot2 package doesn't support creating a pie chart out of the box (there are tutorials online), so the next best option is a *Simple Bar Chart*.
 
 ```{r}
 #type of your code/command here.
@@ -150,8 +150,8 @@ recodeQ260 <- function (column) {
   )
 }
 
-# TODO: can Y be a percentage?
-# Pie chart - need internet to make a pie chart, using bar for now
+
+# Bar chart
 wvsWb |>
   mutate(
     Q260 = recodeQ260(Q260), # sex
@@ -196,7 +196,7 @@ wvsWb |>
 # -4-.- Not asked
 # -5-.- Missing; Not available
 
-# TODO: can Y be a percentage?
+
 # Excluding wield values already recoded to NA values
 wvsWb |>
   ggplot(aes(x = Q112)) + 
@@ -222,7 +222,7 @@ wvsWb |>
 #type of your code/command here.
 # Column: ControlCorruption
 
-# TODO: can Y be a percentage?
+
 wvsWb |>
   ggplot(aes(x = ControlCorruption)) + 
   geom_histogram(
@@ -256,14 +256,14 @@ recodeCPIA <- function (column) {
   )
 }
 
-# TODO: can Y be a percentage? Can we represent a range of 1 - 6?
 wvsWb |>
   mutate(
     CPIA = recodeCPIA(CPIA),
   ) |>
   ggplot(aes(x = CPIA)) + 
   geom_histogram(
-    bins = 4,
+    aes(xmin = 0, xmax = 6), # from R Documentation
+    binwidth = 0.5, # values are 2, 2.5, and 3
     color = 1,
     fill = "lightblue",
     na.rm = TRUE # from R Documentation
@@ -279,16 +279,59 @@ wvsWb |>
 
     **Briefly describe the graph you plot, and answer: Does the graph we create from the data support the hypothesis?**
 
-\(1\) Hypothesis#1:
+\(1\) Hypothesis #1: if a country has a higher Control of Corruption rating in the World Bank data, then its citizens will perceive the country as less corrupt in the WVS dataset.
+- I've use a smoothed conditional mean line graph to depict the average perceptions of corruption compared to the control of corruption rating
+- For the most part, this graph supports my hypothesis. A higher Control of Corruption rating does correspond with lower levels of perceived corruption
+- This average does change for countries with  the lowest Control of Corruption ratings, which have reported lower levels perceived corruption.  This dip may indicate that survey respondents don't feel safe/comfortable reporting the levels of perceived corruption in those countries.
 
 ```{r}
 #type of your code/command here.
+wvsWb |>
+  ggplot(aes(x = ControlCorruption, y = Q112)) +
+    geom_smooth(
+      aes(ymin = 0, ymax = 10), # from R Documentation
+      se = FALSE,
+      na.rm = TRUE # from R Documentation
+    ) +
+    labs(
+      caption = "data source: World Bank and WVS 2020",
+      title = "Control of Corruption compared with Perception of Corruption",
+      x = "Control of Corruption",
+      y = "Perception of Corruption"
+    )
 ```
 
-\(2\) Hypothesis#2:
+\(2\) Hypothesis #2: younger age groups will have higher perceptions of corruption compared to older generations in countries that have negative control ratings.
+- After filtering the dataset to only include contries with negative Control of Corruption ratings, I created grouped bar graphs to show the age ranges within a country and their average perceptions of corruption.
+- My hypothesis was disproved in 6 out of 11 countries where the perception of corruption generally increased in older age groups (Guatemala, Iran, Kyrgyz Republic, Tajikistan, Ukraine, Nicaragua).  It only really applied in Vietnam, Myanmar, and Zimbabwe
 
 ```{r}
 #type of your code/command here.
+
+# Learned bar graph of mean from Stack Overflow: https://stackoverflow.com/a/30183688
+# Learned how to rotate x-axis text from Stack Overflow: https://stackoverflow.com/a/1331400
+wvsWb |>
+  mutate(
+    X003R = recodeX003R(X003R), # age
+  ) |>
+  filter(ControlCorruption < 0) |>
+  ggplot(aes(fill = X003R, x = `Country Name`, y = Q112)) +
+    geom_bar(
+      position="dodge",
+      stat="summary",
+      fun = "mean", 
+      na.rm = TRUE # from R Documentation
+    ) +
+    labs(
+      caption = "data source: World Bank and WVS 2020",
+      title = "Control of Corruption compared with Perception of Corruption",
+      x = "Control of Corruption",
+      y = "Perception of Corruption",
+      fill = "Age Range"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    )
 ```
 
 ## Part 2. Comparing between Partial and Whole, and among Groups (40%)
