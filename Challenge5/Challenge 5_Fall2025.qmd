@@ -43,7 +43,30 @@ You are provided with two datasets: "museums.csv" and "paintings.csv.". The muse
 paintings <- read_csv("data/paintings.csv")
 
 paintings_AD <- paintings |>
-  filter(year >= 0)
+  filter(year >= 0) |>
+  mutate(
+    year = make_date(year)
+  )
+
+# Learned how to rotate x-axis text from Stack Overflow: https://stackoverflow.com/a/1331400
+paintings_AD |>
+  group_by(year) |>
+  summarise(count = n()) |>
+  ggplot(aes(x = year, y = count)) +
+  geom_point(na.rm = TRUE) +
+  scale_x_date(
+    limits = as.Date(c("2000-01-01","2023-01-01")), 
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  labs(
+    title = "Total Number of Paintings Between Years 2000 and 2023",
+    x = "Years",
+    y = "Count"
+  )  +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
 ```
 
 **B. Now we will be using the original paintings data (no need to convert year to date data) .** Plot the total number of paintings from each decade (1800-1809 is one decade, 1810-1819 another etc.) between AD 1000 and AD 2020 . After plotting, type your asnwers to the following questions: Do you see a pattern? Do paintings from a certain period feature more prominantly in US museums?
