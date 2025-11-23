@@ -1,0 +1,408 @@
+---
+title: "Challenge_4: Intro to Visulization: Univariate and Multivariate Graphs"
+author: "Edward Stumpf"
+description: ""
+date: "11/4/2025"
+format:
+  html:
+    df-print: paged
+    embed-resources: true
+    self-contained-math: true
+---
+
+**Make sure you change the author's name in the above YAML header.**
+
+## Setup
+
+If you have not installed the following packages, please install them before loading them.
+
+```{r}
+library(tidyverse)
+library(readr)
+library(ggplot2) # if you have not installed this package, please install it.
+```
+
+## Challenge Overview
+
+In this challenge, we will practice with the data we worked on in the previous challenges and the data you choose to do some simple data visualizations using the `ggplot2` package.
+
+There will be coding components and writing components. Please read the instructions for each part and complete your challenges.
+
+**Graph customization requirement: you should at least include a title for any graph you make.** It is optional for you to apply other commands and functions to customize title, legend, color, note, theme, and other graph elements.
+
+## Datasets
+
+-   Part 1 the WVS_WB Data (created in Challenge#3) ⭐⭐
+-   Part 2: the athlete_events Data (from Challenge#1) ⭐⭐
+
+Find the `_data` folder, then read the datasets using the correct R command.
+
+## Part 1. Univariate and Multivariate Graphs (60%)
+
+We have been working with these two data in the previous three challenges. Suppose we have a research project that studies individuals' corruption perception, and we are interested in how the countries that respondents live in influence their opinion. In this challenge, let's work with the combined dataset *WVS_WB* and create some visualizations.
+
+1.  **Read the combined data you created in Challenge#3.**
+
+```{r}
+#type of your code/command here.
+wvsWb <- read_csv("data/WVS_WB.csv")
+```
+
+2.  **Suppose we are interested in the central tendencies and distributions of the following variables. At the individual level:** *Q260 (sex), X003R (age)* and *Q112 (perceptions of corruption)*. **At the country level**: *ControlCorruption* and *CPIA*.
+
+    \(1\) For each of the five variables (*Q260, Q275K, Q112, ControlCorruption, and CPIA*), please choose an appropriate type of univariate graph to plot the central tendencies and distribution of the variables for each of them. Explain why you choose this type of graph to present a particular variable (for example: "I use a histogram to plot *ControlCorruption* because it is a continuous numeric variable").
+
+    **(Note 1: You should use at least two types of univariate graphs covered in the lecture.)**
+
+    **(hint 1: You should do summary statistics and check data type to examine each variable and decide what chart type to use. It's up to you what functions you want to use to conduct summary statistics and check data type.)**
+
+    **(hint 2: don't forgot to check if the data contains "wield values", such as negative numbers. You should decide whether treat them as NA or not.)**
+
+```{r}
+#type of your code/command here.
+summary(wvsWb)
+wvsWb |>
+  select(`ControlCorruption`) |>
+  distinct()
+wvsWb |>
+  select(`CPIA`) |>
+  distinct()
+```
+
+-   Age: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Age question provides a number of discrete categories (specifically, age ranges plus wield values).  There are 6 discrete categories plus an additional wield value group, so this data is best represented by a *Simple Bar Chart*
+
+```{r}
+#type of your code/command here.
+# Column: X003R
+# From Codebook:
+# 1.- 16-24 years
+# 2.- 25-34 years
+# 3.- 35-44 years
+# 4.- 45-54 years
+# 5.- 55-64 years
+# 6.- 65 and over 
+# -1-.- Don't know
+# -2-.- No answer
+# -4-.- Not asked
+# -5-.- Missing; Not available; AU: Other
+
+# Adapted Function from my Challenge 3 submission
+# I am opting to recode all wield values for the investigated WVS survey questions
+# Using NA
+recodeX003R <- function (column) {
+  case_when(
+    column == -1 ~ "NA",
+    column == -2 ~ "NA",
+    column == -4 ~ "NA",
+    column == -5 ~ "NA",
+    column == 1 ~ "16-24 years",
+    column == 2 ~ "25-34 years",
+    column == 3 ~ "35-44 years",
+    column == 4 ~ "45-54 years",
+    column == 5 ~ "55-64 years",
+    column == 6 ~ "65 and over",
+    TRUE ~ "Unknown"
+  )
+}
+
+
+# Discrete categories: Bar Chart
+wvsWb |>
+  mutate(
+    X003R = recodeX003R(X003R), # age
+  ) |>
+  ggplot(aes(x = X003R)) + 
+    geom_bar(
+      color = 1,
+      fill = "lightblue"
+    ) +
+    labs(
+      caption = "Age recoded (6 intervals)",
+      title = "World Values Survey Wave 7",
+      x = "Age Ranges",
+      y = "Count"
+    )
+```
+
+-   Sex: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides a number of discrete categories (specifically, male or female plus wield values).  There are 2 discrete categories plus an additional wield value group, so this data is best represented by a *Pie Chart*.  The ggplot2 package doesn't support creating a pie chart out of the box (there are tutorials online), so the next best option is a *Simple Bar Chart*.
+
+```{r}
+#type of your code/command here.
+# Column: Q260
+# From Codebook
+# 1.- Male
+# 2.- Female
+# -2-.- No answer
+# -4-.- Not asked
+# -5-.- Missing; Not available; AU: Other
+
+# Adapted Function from my Challenge 3 submission
+# I am opting to recode all wield values for the investigated WVS survey questions
+# Using NA
+recodeQ260 <- function (column) {
+  case_when(
+    column == -2 ~ "NA",
+    column == -4 ~ "NA",
+    column == -5 ~ "NA",
+    column == 1 ~ "Male",
+    column == 2 ~ "Female",
+    TRUE ~ "Unknown"
+  )
+}
+
+
+# Bar chart
+wvsWb |>
+  mutate(
+    Q260 = recodeQ260(Q260), # sex
+  ) |>
+  ggplot(aes(x = Q260)) + 
+    geom_bar(
+      color = 1,
+      fill = "lightblue"
+    ) +
+    labs(
+      caption = "Respondent’s sex",
+      title = "World Values Survey Wave 7",
+      x = "Sex",
+      y = "Count"
+    )
+```
+
+-   Perceptions of corruption: according to the summary statistics (and the WVS7 Codebook provided in Challenge 3), the Sex question provides used a Likert scale (specifically, values 1 through 10 plus NA values).  Likert scales provide ordinal data, so this data is best represented by a *Histogram*
+
+```{r}
+#type of your code/command here.
+# Column: Q112
+# From Codebook:
+# Now I'd like you to tell me your views on corruption – when people pay a bribe, give a 
+# gift or do a favor to other people in order to get the things they need done or the services 
+# they need. How would you place your views on corruption in your country on a 10-point 
+# scale where “1” means “there is no corruption in this country” and “10” means “there 
+# is abundant corruption in this country”. If your views are somewhat mixed, choose the 
+# appropriate number in between.
+# 1.- 1
+# 2.- 2
+# 3.- 3
+# 4.- 4
+# 5.- 5
+# 6.- 6
+# 7.- 7
+# 8.- 8
+# 9.- 9
+# 10.- 10
+# -1-.- Don´t know
+# -2-.- No answer
+# -4-.- Not asked
+# -5-.- Missing; Not available
+
+
+# Excluding wield values already recoded to NA values
+wvsWb |>
+  ggplot(aes(x = Q112)) + 
+    geom_histogram(
+      binwidth = 1, 
+      color = 1,
+      fill = "lightblue",
+      na.rm = TRUE # from R Documentation
+    ) + 
+    labs(
+      caption = "How would you place your views on corruption in your country on a 10-point scale where “1” means 
+      “there is no corruption in this country” and “10” means “there is abundant corruption in this country”. 
+      If your views are somewhat mixed, choose the appropriate number in between.",
+      title = "World Values Survey Wave 7",
+      x = "Perceptions of Corruption",
+      y = "Count"
+    )
+```
+
+-   Control of Corruption: according to the summary statistics and number of distinct values, there 14 distinct values (without equivalent to NA) that include negative and positive numbers. There are fewer than 20 of these continuous values, so this data can be represented by a *Histogram*
+
+```{r}
+#type of your code/command here.
+# Column: ControlCorruption
+
+
+wvsWb |>
+  ggplot(aes(x = ControlCorruption)) + 
+  geom_histogram(
+    bins = 14, 
+    color = 1,
+    fill = "lightblue"
+  ) + 
+  labs(
+    title = "World Values Survey Wave 7",
+    x = "Control of Corruption",
+    y = "Count"
+  )
+```
+
+-   CPIA: according to the World Bank FAQ, the CPIA is a scale of 1 (low) to 6 (high). The summary statistics and number of distinct values within this dataset, there 4 distinct values (including the equivalent to NA) that are all positive numeric values (note: column data is currently in characters). Rather than being ordinal data (as the scale description would indicate), this data is interval data, since not all of these values are whole numbers. Given this and the number of distinct values being under 20, this data is best represented by a *Histogram*
+See: B.Q5 in the online [Country Policy and Institutional Assessment: Frequently Asked Questions PDF](https://thedocs.worldbank.org/en/doc/469321531149313421-0290022018/original/CPIAwebFAQ17.pdf)
+
+```{r}
+#type of your code/command here.
+# Column: CPIA
+# Note: not initially numeric
+
+# Adapted Function from my Challenge 3 submission
+# I am opting to recode all wield values for the investigated WVS survey questions
+# Using NA
+# Future: get rid of numeric coercion
+recodeCPIA <- function (column) {
+  case_when(
+    column == ".." ~ NA,
+    TRUE ~ as.numeric(column)
+  )
+}
+
+wvsWb |>
+  mutate(
+    CPIA = recodeCPIA(CPIA),
+  ) |>
+  ggplot(aes(x = CPIA)) + 
+  geom_histogram(
+    aes(xmin = 0, xmax = 6), # from R Documentation
+    binwidth = 0.5, # values are 2, 2.5, and 3
+    color = 1,
+    fill = "lightblue",
+    na.rm = TRUE # from R Documentation
+  ) + 
+  labs(
+    title = "World Values Survey Wave 7",
+    x = "CPIA",
+    y = "Count"
+  )
+```
+
+3.  **Suppose we want to test two hypotheses on the relationships of two pairs of variables**. **Please use the appropriate type of graphs we learned to visualize these two pairs of variables.**
+
+    **Briefly describe the graph you plot, and answer: Does the graph we create from the data support the hypothesis?**
+
+\(1\) Hypothesis #1: if a country has a higher Control of Corruption rating in the World Bank data, then its citizens will perceive the country as less corrupt in the WVS dataset.
+- I've use a smoothed conditional mean line graph to depict the average perceptions of corruption compared to the control of corruption rating
+- For the most part, this graph supports my hypothesis. A higher Control of Corruption rating does correspond with lower levels of perceived corruption
+- This average does change for countries with  the lowest Control of Corruption ratings, which have reported lower levels perceived corruption.  This dip may indicate that survey respondents don't feel safe/comfortable reporting the levels of perceived corruption in those countries.
+
+```{r}
+#type of your code/command here.
+wvsWb |>
+  ggplot(aes(x = ControlCorruption, y = Q112)) +
+    geom_smooth(
+      aes(ymin = 0, ymax = 10), # from R Documentation
+      se = FALSE,
+      na.rm = TRUE # from R Documentation
+    ) +
+    labs(
+      caption = "data source: World Bank and WVS 2020",
+      title = "Control of Corruption compared with Perception of Corruption",
+      x = "Control of Corruption",
+      y = "Perception of Corruption"
+    )
+```
+
+\(2\) Hypothesis #2: younger age groups will have higher perceptions of corruption compared to older generations in countries that have negative control ratings.
+- After filtering the dataset to only include contries with negative Control of Corruption ratings, I created grouped bar graphs to show the age ranges within a country and their average perceptions of corruption.
+- My hypothesis was disproved in 6 out of 11 countries where the perception of corruption generally increased in older age groups (Guatemala, Iran, Kyrgyz Republic, Tajikistan, Ukraine, Nicaragua).  It only really applied in Vietnam, Myanmar, and Zimbabwe
+
+```{r}
+#type of your code/command here.
+
+# Learned bar graph of mean from Stack Overflow: https://stackoverflow.com/a/30183688
+# Learned how to rotate x-axis text from Stack Overflow: https://stackoverflow.com/a/1331400
+wvsWb |>
+  mutate(
+    X003R = recodeX003R(X003R), # age, borrowing function from earlier section
+  ) |>
+  filter(ControlCorruption < 0) |>
+  ggplot(aes(fill = X003R, x = `Country Name`, y = Q112)) +
+    geom_bar(
+      position="dodge",
+      stat="summary",
+      fun = "mean", 
+      na.rm = TRUE # from R Documentation
+    ) +
+    labs(
+      caption = "data source: World Bank and WVS 2020",
+      title = "Control of Corruption compared with Perception of Corruption",
+      x = "Control of Corruption",
+      y = "Perception of Corruption",
+      fill = "Age Range"
+    ) +
+    theme(
+      axis.text.x = element_text(angle = 45, hjust = 1)
+    )
+```
+
+## Part 2. Comparing between Partial and Whole, and among Groups (40%)
+
+In this part, we will use the athlete_events data.
+
+1.  Read in data.
+
+```{r}
+#type of your code/command here.
+athleteEvents <- read_csv("data/athlete_events.csv")
+
+athleteEvents |>
+  select(`Medal`) |>
+  distinct()
+```
+
+2.  Use a barplot to graph the Athlete data based on Medal: Gold, Silver, Bronze, and NA (no metal). The y-axis should be the count of medals, and each medal, including NA, should be represented by one individual bar (so there should be four bars).
+
+    (you can use either geom_bar() or geom_col())
+
+```{r}
+#type of your code/command here.
+athleteEvents |>
+  ggplot(aes(x = `Medal`, fill = `Medal`)) +
+    geom_bar()
+```
+
+3.  The previous graph only shows the difference in amount. Let's create a stacked-to-100% barplot to show the proportion of each of the four medals (by % of the total response).
+
+(you can use either geom_bar() or geom_col())
+
+```{r}
+#type of your code/command here.
+#Percentage stacked plot
+
+# Took placeholder suggestion from https://stackoverflow.com/a/67557353
+# Note: I expect this is incorrect due to the missing percentages on the Y-axis,
+# but I'm struggling to find the appropriate solution
+athleteEvents |>
+  ggplot(aes(x = "", y = `Medal`, fill = `Medal`)) +
+    geom_col()
+
+```
+
+4.  Let's see if there's a relationship between Country and Medals - that is, are certain countries more likely to receive a certain type of metals compared to other countries? Given the large number of countries covered in the data, let's focus on the following contreis: Australia, Brazil, Canada, China, Germany, India, Russia, and the U.S.. Again, we will use barplot(s) to present the visualization.
+
+    (you can use either geom_bar() or geom_col())
+    
+    Countries that send more athletes to the Games are more likely to medal.  The United States and India are more likely to win a gold medal than other types of medals (if the athlete places).  Australia is more likeley to win a bronze medal than other types of medals (again, if the athlete places)
+
+```{r}
+#type of your code/command here.
+# Verify our regex
+athleteEvents |>
+  filter(str_detect(
+    `Team`, 
+    "^(Australia|Brazil|Canada|China|Germany|India|Russia|United States)$"
+  )) |>
+  select(`Team`) |>
+  distinct()
+
+# generate the graph
+athleteEvents |>
+  filter(str_detect(
+    `Team`, 
+    "^(Australia|Brazil|Canada|China|Germany|India|Russia|United States)$"
+  )) |>
+  ggplot(aes(fill = `Medal`, x = `Team`)) +
+    geom_bar(
+      position="dodge"
+    )
+
+```
