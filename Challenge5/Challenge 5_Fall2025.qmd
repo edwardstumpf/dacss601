@@ -23,6 +23,7 @@ library(lubridate)
 library(sf)
 library(maps)
 library(ggplot2)
+library(plotly) # including to make graphs interactive
 ```
 
 ## Challenge Overview
@@ -41,6 +42,7 @@ You are provided with two datasets: "museums.csv" and "paintings.csv.". The muse
 
 ```{r}
 paintings <- read_csv("data/paintings.csv")
+museums <- read_csv("data/museums.csv")
 
 paintings_AD <- paintings |>
   filter(year >= 0) |>
@@ -49,7 +51,7 @@ paintings_AD <- paintings |>
   )
 
 # Learned how to rotate x-axis text from Stack Overflow: https://stackoverflow.com/a/1331400
-paintings_AD |>
+plot <- paintings_AD |>
   group_by(year) |>
   summarise(count = n()) |>
   ggplot(aes(x = year, y = count)) +
@@ -60,13 +62,15 @@ paintings_AD |>
     date_labels = "%Y"
   ) +
   labs(
-    title = "Total Number of Paintings Between Years 2000 and 2023",
+    caption = "Between 2000 and 2023 CE",
+    title = "Total Number of Paintings By Year",
     x = "Years",
     y = "Count"
   )  +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+ggplotly(plot)
 ```
 
 **B. Now we will be using the original paintings data (no need to convert year to date data) .** Plot the total number of paintings from each decade (1800-1809 is one decade, 1810-1819 another etc.) between AD 1000 and AD 2020 . After plotting, type your asnwers to the following questions: Do you see a pattern? Do paintings from a certain period feature more prominantly in US museums?
@@ -78,9 +82,34 @@ paintings_AD |>
 \(2\) devide `year` by 10, then use `floor()` in baseR to round a numeric value down to the nearest integer, and then multiple it by 10.)
 
 **Answer:**
+- There is a sharp increase in the number of paintings per decade starting in 1850 and peaking in 1960.  There is a sharp decrease after 1960.
+- The 1850 and 1960 range mainly aligns with the western Modern Art period, while the 1960s onward decline aligns with the western Contemporary Art period.
+- See Wikipedia's [Periods in Western art history](https://en.wikipedia.org/wiki/Periods_in_Western_art_history) article
 
 ```{r}
+yearToDecade <- function (value) {
+  floor(value / 10) * 10
+}
 
+plot <- paintings |>
+  mutate(
+    decade = yearToDecade(year)
+  ) |>
+  filter(
+    (decade >= 1000 & decade <= 2020)
+  ) |>
+  group_by(decade) |>
+  summarise(count = n()) |>
+  ggplot(aes(x = decade, y = count)) +
+  geom_point(na.rm = TRUE) +
+  labs(
+    caption = "Between 1000 and 2020 CE",
+    title = "Total Number of Paintings By Decade",
+    x = "Decades",
+    y = "Count"
+  )
+
+ggplotly(plot)
 ```
 
 **C.** Plot the total number of paintings in each decade that depict one or more of “Jesus”, “Mary”, “Christ Child”, “Madonna and Child”, “John the Baptist”, “Christ”.
