@@ -159,6 +159,12 @@ Hint 2: when you plot the museum paintings metadata on the base map, please make
 library(maps)
 us_states <- map_data("state")
 
+# From Lecture 8 demo
+us_states_plot <- ggplot(
+    data = us_states,
+    mapping = aes(x = long, y = lat, group = group)
+  ) +
+  geom_polygon(fill = "white", color = "black")
 ```
 
 ```{r}
@@ -167,5 +173,60 @@ museum_paintings <- paintings |>
   summarise(count = n()) |>
   inner_join(museums, by = c("museum" = "museum"))
 
+# Note: Encountered "Error in `geom_point()`" caused by "object 'group' not found"
+# I Googled "ggplot geom_point group not found" and used the provided AI Overview output to realize my code was missing "group = 1" since there is only 1 group
+plot <- us_states_plot +
+  geom_point(
+    data = museum_paintings, 
+    aes(
+      x = longitude, 
+      y = latitude, 
+      size = count, 
+      group = 1, # discovered fix from AI Overview
+      label = museum # using to enrich interactive tooltip; learned from https://stackoverflow.com/a/36345358
+    ),
+    inherit.aes = FALSE
+  ) +
+  labs(
+    title = "United Status Art Museums with Number of Paintings",
+    y = "Latitude",
+    x = "Longitude"
+  )
 
+ggplotly(plot)
+
+##################
+# Mapping Hawaii #
+##################
+
+# Taking more extensive map that will include Hawaii from Week 8 Demo
+states_sf <- st_read("data/cb_2018_us_state_500k/cb_2018_us_state_500k.shp")
+
+united_states <- ggplot() +
+  geom_sf(data = states_sf) +
+  coord_sf(
+    xlim = c(-180, -65),
+    ylim = c(20, 50)
+  ) +
+  theme_light()
+
+plot <- united_states +
+  geom_point(
+    data = museum_paintings, 
+    aes(
+      x = longitude, 
+      y = latitude, 
+      size = count, 
+      group = 1, # discovered fix from AI Overview
+      label = museum # using to enrich interactive tooltip; learned from https://stackoverflow.com/a/36345358
+    ),
+    inherit.aes = FALSE
+  ) +
+  labs(
+    title = "United Status Art Museums with Number of Paintings",
+    y = "Latitude",
+    x = "Longitude"
+  )
+
+ggplotly(plot)
 ```
