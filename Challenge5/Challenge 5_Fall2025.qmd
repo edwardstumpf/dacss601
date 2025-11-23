@@ -56,14 +56,14 @@ plot <- paintings_AD |>
   summarise(count = n()) |>
   ggplot(aes(x = year, y = count)) +
   geom_point(na.rm = TRUE) +
+  geom_line() +
   scale_x_date(
     limits = as.Date(c("2000-01-01","2023-01-01")), 
     date_breaks = "1 year",
     date_labels = "%Y"
   ) +
   labs(
-    caption = "Between 2000 and 2023 CE",
-    title = "Total Number of Paintings By Year",
+    title = "Total Number of Paintings By Year: 2000 CE to 2023 CE",
     x = "Years",
     y = "Count"
   )  +
@@ -91,10 +91,12 @@ yearToDecade <- function (value) {
   floor(value / 10) * 10
 }
 
-plot <- paintings |>
+paintings <- paintings |>
   mutate(
     decade = yearToDecade(year)
-  ) |>
+  )
+
+plot <- paintings |>
   filter(
     (decade >= 1000 & decade <= 2020)
   ) |>
@@ -102,9 +104,9 @@ plot <- paintings |>
   summarise(count = n()) |>
   ggplot(aes(x = decade, y = count)) +
   geom_point(na.rm = TRUE) +
+  geom_line() +
   labs(
-    caption = "Between 1000 and 2020 CE",
-    title = "Total Number of Paintings By Decade",
+    title = "Total Number of Paintings By Decade: 1000 CE to 2020 CE",
     x = "Decades",
     y = "Count"
   )
@@ -116,14 +118,35 @@ ggplotly(plot)
 
 After plotting, type your answer: does this reveal anything about patterns of interest in early Christianity?
 
+First, at the painting level, we need to determine which paintings depict one or more of these.
+
 Hint: first create a string vector that contains all these keywords. When you plotting, you can subset the dataset by using `filter(str_detect(depicts, paste(string, collapse = "|")))`
 
 **Answer:**
-
-First, at the painting level, we need to determine which paintings depict one or more of these.
+- There is an increase in paintings featuring Christian iconography (defined as depicting Jesus, Mary, or John the Baptist) after 1400 CE and peaking at 1500 CE.  From there, there is a decline until 1560 CE.
+- This peak aligns with the western Renaissance, which indicates that one of this era's features is paintings of Christian iconography.
+- See Wikipedia's [Periods in Western art history](https://en.wikipedia.org/wiki/Periods_in_Western_art_history) article
 
 ```{r}
+christianIconography <- c("Jesus", "Mary", "Christ Child", "Madonna and Child", "John the Baptist", "Christ")
 
+plot <- paintings |>
+  filter(
+    str_detect(depicts, paste(christianIconography, collapse = "|"))
+  ) |>
+  group_by(decade) |>
+  summarise(count = n()) |>
+  ggplot(aes(x = decade, y = count)) +
+  geom_point(na.rm = TRUE) +
+  geom_line() +
+  labs(
+    caption = "Christian iconography includes depictions of Jesus, Mary, or John the Baptist",
+    title = "Total Number of Paintings By Decade Featuring Christian Iconography",
+    x = "Decades",
+    y = "Count"
+  )
+
+ggplotly(plot)
 ```
 
 **D.** In this question, we will be using geom_polygon to create a base US map, and then plot all of the museums on a map of the United States using their latitude and longitude. Adjust the size of museum's "point" on the map to be proportional to the total number of paintings in that museum.
@@ -139,5 +162,10 @@ us_states <- map_data("state")
 ```
 
 ```{r}
+museum_paintings <- paintings |>
+  group_by(museum) |>
+  summarise(count = n()) |>
+  inner_join(museums, by = c("museum" = "museum"))
+
 
 ```
