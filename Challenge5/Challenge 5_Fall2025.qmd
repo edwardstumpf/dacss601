@@ -1,0 +1,91 @@
+---
+title: "Challenge 5: Visualizing Time and Space"
+author: "Edward Stumpf"
+date: "2025/11/22"
+format:
+  html:
+    df-print: paged
+    embed-resources: true
+    self-contained-math: true
+---
+
+**Make sure you change the author's name in the above YAML header.**
+
+## Setup
+
+If you have not installed the following packages, please install them before loading them.
+
+```{r}
+library(tidyverse)|>suppressPackageStartupMessages() #you can use this suppressPackageStartupMessages() to hide the warning messages when loading 
+library(readr)
+library(stringr)
+library(lubridate)
+library(sf)
+library(maps)
+library(ggplot2)
+```
+
+## Challenge Overview
+
+In this challenge, you will answer questions about time and space using datasets with temporal and spatial components. You will also get to visualize temporal and spatial patterns.
+
+There will be coding components and writing components. Please read the instructions for each part and complete your challenge.
+
+Find the `_data` folder, then read the datasets using the correct R command.
+
+You are provided with two datasets: "museums.csv" and "paintings.csv.". The museums dataset has latitude and longitude information for a selection of museums in the United States. The paintings dataset has information on paintings in those museums, including **painting_id**---a unique identifier for each painting---**title**, **artist**, **year**---the painting's creation year,**depicts**---a comma separated series of items that the painting depicts if available, and **museum**---one of the museums from the museums dataset that hosts the painting. Answer the questions in this part using those datasets.
+
+**A.** Plot the total number of paintings over years between 2000 and 2023. Please use `scale_x_date()` to answer this question
+
+**Hint#1: In this question alone, you need to create a new dataset call paintings_AD** **which drops all paintings were created in BCE years**, because neither `as.Date()` nor `make_date()` support converting BCE years (and they generate `NA`).
+
+```{r}
+paintings <- read_csv("data/paintings.csv")
+
+paintings_AD <- paintings |>
+  filter(year >= 0)
+```
+
+**B. Now we will be using the original paintings data (no need to convert year to date data) .** Plot the total number of paintings from each decade (1800-1809 is one decade, 1810-1819 another etc.) between AD 1000 and AD 2020 . After plotting, type your asnwers to the following questions: Do you see a pattern? Do paintings from a certain period feature more prominantly in US museums?
+
+(Hint: There is no `decade` variable in `paintings`, so we need to derive it from year. We can do it two ways:
+
+\(1\) take the first three digits of `year` using `str_sub()` .
+
+\(2\) devide `year` by 10, then use `floor()` in baseR to round a numeric value down to the nearest integer, and then multiple it by 10.)
+
+**Answer:**
+
+```{r}
+
+```
+
+**C.** Plot the total number of paintings in each decade that depict one or more of “Jesus”, “Mary”, “Christ Child”, “Madonna and Child”, “John the Baptist”, “Christ”.
+
+After plotting, type your answer: does this reveal anything about patterns of interest in early Christianity?
+
+Hint: first create a string vector that contains all these keywords. When you plotting, you can subset the dataset by using `filter(str_detect(depicts, paste(string, collapse = "|")))`
+
+**Answer:**
+
+First, at the painting level, we need to determine which paintings depict one or more of these.
+
+```{r}
+
+```
+
+**D.** In this question, we will be using geom_polygon to create a base US map, and then plot all of the museums on a map of the United States using their latitude and longitude. Adjust the size of museum's "point" on the map to be proportional to the total number of paintings in that museum.
+
+Hint 1: using `geom_polygon` to plot a base map for the US map first
+
+Hint 2: when you plot the museum paintings metadata on the base map, please make sure to include `inherit.aes = FALSE` as the last part in the `geom_point()` code. For example: `geom_point(data, aes(), inherit.aes = FALSE)`.
+
+```{r}
+library(maps)
+us_states <- map_data("state")
+
+```
+
+```{r}
+
+```
